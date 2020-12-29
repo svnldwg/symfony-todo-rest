@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class RestController
+class ToDoController
 {
     private ToDoRepository $toDoRepository;
     private SerializerInterface $serializer;
@@ -24,36 +24,31 @@ class RestController
     }
 
     /**
-     * @Route("/rest/add", name="add_number", methods={"POST"})
+     * @Route("/todos", name="add_todo", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        $number = $data['number'] ?? null;
+        $name = $data['name'] ?? null;
 
-        if ($number === null) {
-            throw new NotFoundHttpException('Expecting mandatory parameter "number"!');
+        if ($name === null) {
+            throw new NotFoundHttpException('Expecting mandatory parameter "name"!');
         }
 
-        $this->toDoRepository->save($number);
+        $this->toDoRepository->save($name);
 
-        return new JsonResponse(['status' => 'Number persisted!'], Response::HTTP_CREATED);
+        return new JsonResponse(['status' => 'ToDo persisted!'], Response::HTTP_CREATED);
     }
 
     /**
-     * @Route("/rest/latest/{limit<\d+>?10}", name="latest_numbers", methods={"GET"})
+     * @Route("/todos", name="list_todos", methods={"GET"})
      */
-    public function latest(int $limit): JsonResponse
+    public function list(): JsonResponse
     {
-        $numbers = $this->toDoRepository->findLatest($limit);
+        $toDos = $this->toDoRepository->findAll();
 
-        $data = [
-            'limit'   => $limit,
-            'numbers' => $numbers,
-        ];
-
-        $jsonData = $this->serializer->serialize($data, 'json');
+        $jsonData = $this->serializer->serialize($toDos, 'json');
 
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
     }
