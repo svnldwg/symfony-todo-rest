@@ -24,4 +24,10 @@ class ToDoRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($todo);
         $this->getEntityManager()->flush();
     }
+
+    public function delete(ToDo $toDo): void
+    {
+        $this->getEntityManager()->remove($toDo);
+        $this->getEntityManager()->flush();
+    }
 }

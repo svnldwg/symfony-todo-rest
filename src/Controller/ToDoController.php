@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ToDo;
 use App\Repository\ToDoRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,11 +15,13 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ToDoController
 {
+    private EntityManagerInterface $entityManager;
     private ToDoRepository $toDoRepository;
     private SerializerInterface $serializer;
     private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
+        EntityManagerInterface $entityManager,
         ToDoRepository $toDoRepository,
         SerializerInterface $serializer,
         UrlGeneratorInterface $urlGenerator
@@ -26,6 +29,7 @@ class ToDoController
         $this->toDoRepository = $toDoRepository;
         $this->serializer = $serializer;
         $this->urlGenerator = $urlGenerator;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -78,9 +82,58 @@ class ToDoController
     /**
      * @Route("/todos/{id<\d+>}", name="show_todo", methods={"GET"})
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id): Response
     {
         $toDo = $this->toDoRepository->find($id);
+
+        if ($toDo === null) {
+            return new Response(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $responseJsonData = $this->serializer->serialize($toDo, 'json', [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
+                return $object->getId();
+            },
+        ]);
+
+        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
+    }
+
+    /**
+     * @Route("/todos/{id<\d+>}", name="delete_todo", methods={"DELETE"})
+     */
+    public function delete(int $id): Response
+    {
+        $toDo = $this->toDoRepository->find($id);
+
+        if ($toDo === null) {
+            return new Response(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $this->toDoRepository->delete($toDo);
+
+        return new Response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route("/todos/{id<\d+>}", name="update_todo", methods={"PUT"})
+     */
+    public function update(int $id, Request $request): Response
+    {
+        $toDo = $this->toDoRepository->find($id);
+
+        if ($toDo === null) {
+            return new Response(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $toDoUpdate = $this->serializer->deserialize($request->getContent(), ToDo::class, 'json');
+        assert($toDoUpdate instanceof ToDo);
+
+        $toDo->setName($toDoUpdate->getName())
+            ->setDescription($toDoUpdate->getDescription())
+            ->setTasks($toDoUpdate->getTasks());
+
+        $this->entityManager->flush();
 
         $responseJsonData = $this->serializer->serialize($toDo, 'json', [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {

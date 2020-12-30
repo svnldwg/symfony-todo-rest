@@ -36,6 +36,7 @@ class ToDo
     private ?string $description = null;
 
     /**
+     * @var Collection|Task[]
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true, cascade={"all"})
      */
     private Collection $tasks;
@@ -49,6 +50,13 @@ class ToDo
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     public function getName(): string
@@ -109,6 +117,22 @@ class ToDo
             if ($task->getTodo() === $this) {
                 $task->setTodo(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Collection|Task[] $tasks
+     */
+    public function setTasks(Collection $tasks): self
+    {
+        foreach ($this->tasks as $task) {
+            $this->removeTask($task);
+        }
+
+        foreach ($tasks as $task) {
+            $this->addTask($task);
         }
 
         return $this;
