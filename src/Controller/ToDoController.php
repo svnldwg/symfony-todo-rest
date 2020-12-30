@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -54,6 +55,22 @@ class ToDoController
         $responseData = ['todos' => $toDos];
 
         $responseJsonData = $this->serializer->serialize($responseData, 'json', [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
+                return $object->getId();
+            },
+        ]);
+
+        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
+    }
+
+    /**
+     * @Route("/todos/{id<\d+>}", name="show_todo", methods={"GET"})
+     */
+    public function show(int $id): JsonResponse
+    {
+        $toDo = $this->toDoRepository->find($id);
+
+        $responseJsonData = $this->serializer->serialize($toDo, 'json', [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
             },
