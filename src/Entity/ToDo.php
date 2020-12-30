@@ -15,7 +15,7 @@ class ToDo
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      */
     private int $id;
@@ -33,10 +33,10 @@ class ToDo
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $description;
+    private ?string $description = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true, cascade={"all"})
      */
     private Collection $tasks;
 
@@ -44,6 +44,11 @@ class ToDo
     {
         $this->name = $name;
         $this->tasks = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     public function getName(): string

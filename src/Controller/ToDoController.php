@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\ToDo;
 use App\Repository\ToDoRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ToDoController
@@ -28,17 +29,18 @@ class ToDoController
      */
     public function add(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        // @TODO handle incorrect parameters gracefully (good exception messages, correct http status)
+        $toDo = $this->serializer->deserialize($request->getContent(), ToDo::class, 'json');
 
-        $name = $data['name'] ?? null;
+        $this->toDoRepository->save($toDo);
 
-        if ($name === null) {
-            throw new NotFoundHttpException('Expecting mandatory parameter "name"!');
-        }
+        $todoJson = $this->serializer->serialize($toDo, 'json', [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId();
+            },
+        ]);
 
-        $this->toDoRepository->save($name);
-
-        return new JsonResponse(['status' => 'ToDo persisted!'], Response::HTTP_CREATED);
+        return new JsonResponse($todoJson, Response::HTTP_CREATED, [], true);
     }
 
     /**

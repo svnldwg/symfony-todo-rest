@@ -12,7 +12,7 @@ class Task
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      */
     private int $id;
@@ -25,13 +25,18 @@ class Task
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private ?string $description;
+    private ?string $description = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=ToDo::class, inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
      */
     private ?ToDo $todo;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 
     public function getId(): ?int
     {
