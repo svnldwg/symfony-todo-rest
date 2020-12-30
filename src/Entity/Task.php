@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
  * @ORM\Entity(repositoryClass=TaskRepository::class)
@@ -30,6 +31,7 @@ class Task
     /**
      * @ORM\ManyToOne(targetEntity=ToDo::class, inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
+     * @Ignore()
      */
     private ?ToDo $todo;
 

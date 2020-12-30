@@ -43,12 +43,7 @@ class ToDoController
 
         $this->toDoRepository->save($toDo);
 
-        // @TODO improve circular reference handling (avoid duplicate code)
-        $todoJson = $this->serializer->serialize($toDo, 'json', [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
-                return $object->getId();
-            },
-        ]);
+        $todoJson = $this->convertToDoToJson($toDo);
 
         return new JsonResponse(
             $todoJson,
@@ -91,12 +86,7 @@ class ToDoController
             return new Response(null, Response::HTTP_NOT_FOUND);
         }
 
-        // @TODO don't display todo id on task
-        $responseJsonData = $this->serializer->serialize($toDo, 'json', [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
-                return $object->getId();
-            },
-        ]);
+        $responseJsonData = $this->convertToDoToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
@@ -137,12 +127,22 @@ class ToDoController
 
         $this->entityManager->flush();
 
-        $responseJsonData = $this->serializer->serialize($toDo, 'json', [
+        $responseJsonData = $this->convertToDoToJson($toDo);
+
+        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
+    }
+
+    /**
+     * @param ToDo $toDo
+     *
+     * @return string
+     */
+    private function convertToDoToJson(ToDo $toDo): string
+    {
+        return $this->serializer->serialize($toDo, 'json', [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
             },
         ]);
-
-        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
 }

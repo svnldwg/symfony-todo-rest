@@ -79,7 +79,7 @@ php-cs-fixer: ##@development run php-cs-fixer
 .PHONY: php-cs-fixer
 
 phpunit: ##@development run phpunit
-	$(CLI) ./vendor/bin/phpunit --configuration dev/phpunit.xml
+	$(CLI) ./vendor/bin/phpunit
 .PHONY: phpunit
 
 codecheck: php-cs-fixer phpstan phpunit
