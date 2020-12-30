@@ -50,8 +50,15 @@ class ToDoController
     {
         $toDos = $this->toDoRepository->findAll();
 
-        $jsonData = $this->serializer->serialize($toDos, 'json');
+        // outside primitive should be an object to prevent JSON Hijacking
+        $responseData = ['todos' => $toDos];
 
-        return new JsonResponse($jsonData, Response::HTTP_OK, [], true);
+        $responseJsonData = $this->serializer->serialize($responseData, 'json', [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
+                return $object->getId();
+            },
+        ]);
+
+        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
 }
