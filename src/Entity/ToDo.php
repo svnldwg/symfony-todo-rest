@@ -20,19 +20,10 @@ class ToDo
      */
     private int $id;
 
-    /**
-     * @ORM\Column(type="string")
-     */
+    /** @ORM\Column(type="string") */
     private string $name;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private \DateTimeInterface $updatedAt;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    /** @ORM\Column(type="text", nullable=true) */
     private ?string $description = null;
 
     /**
@@ -40,6 +31,12 @@ class ToDo
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true, cascade={"all"})
      */
     private Collection $tasks;
+
+    /** @ORM\Column(type="datetime") */
+    private \DateTimeInterface $createdAt;
+
+    /** @ORM\Column(type="datetime") */
+    private \DateTimeInterface $updatedAt;
 
     public function __construct(string $name)
     {
@@ -55,27 +52,6 @@ class ToDo
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getUpdatedAt(): \DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAt(): self
-    {
-        $this->updatedAt = new \DateTimeImmutable();
 
         return $this;
     }
@@ -134,6 +110,42 @@ class ToDo
         foreach ($tasks as $task) {
             $this->addTask($task);
         }
+
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setUpdatedAt(): self
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAt(): self
+    {
+        $this->createdAt = new \DateTimeImmutable();
 
         return $this;
     }
