@@ -26,10 +26,10 @@ class ToDoController
         SerializerInterface $serializer,
         UrlGeneratorInterface $urlGenerator
     ) {
+        $this->entityManager = $entityManager;
         $this->toDoRepository = $toDoRepository;
         $this->serializer = $serializer;
         $this->urlGenerator = $urlGenerator;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -43,6 +43,7 @@ class ToDoController
 
         $this->toDoRepository->save($toDo);
 
+        // @TODO improve circular reference handling (avoid duplicate code)
         $todoJson = $this->serializer->serialize($toDo, 'json', [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
@@ -90,6 +91,7 @@ class ToDoController
             return new Response(null, Response::HTTP_NOT_FOUND);
         }
 
+        // @TODO don't display todo id on task
         $responseJsonData = $this->serializer->serialize($toDo, 'json', [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();

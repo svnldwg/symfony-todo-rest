@@ -1,5 +1,7 @@
 # symfony-todo-rest
 
+A simple RESTful API for ToDo items based on Symfony 5.
+
 Infrastructure:
 * PHP 7.4
 * PostgreSQL 13
@@ -15,10 +17,10 @@ Dev Tools:
 
 ## Setup
 
-Browser to directory `dev`
+Browse to directory `dev`
 
 `make setup`
 
-## View in browser
+## ToDo
 
-http://symfony-todo-rest.dev.local:8100/
+- Write tests
