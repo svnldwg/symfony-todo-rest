@@ -16,13 +16,16 @@ class ToDoController
 {
     private ToDoRepository $toDoRepository;
     private SerializerInterface $serializer;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
         ToDoRepository $toDoRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        UrlGeneratorInterface $urlGenerator
     ) {
         $this->toDoRepository = $toDoRepository;
         $this->serializer = $serializer;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -32,16 +35,28 @@ class ToDoController
     {
         // @TODO handle incorrect parameters gracefully (good exception messages, correct http status)
         $toDo = $this->serializer->deserialize($request->getContent(), ToDo::class, 'json');
+        assert($toDo instanceof ToDo);
 
         $this->toDoRepository->save($toDo);
 
         $todoJson = $this->serializer->serialize($toDo, 'json', [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
             },
         ]);
 
-        return new JsonResponse($todoJson, Response::HTTP_CREATED, [], true);
+        return new JsonResponse(
+            $todoJson,
+            Response::HTTP_CREATED,
+            [
+                'Location' => $this->urlGenerator->generate(
+                    'show_todo',
+                    ['id' => $toDo->getId()],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                ),
+            ],
+            true
+        );
     }
 
     /**
@@ -51,10 +66,7 @@ class ToDoController
     {
         $toDos = $this->toDoRepository->findAll();
 
-        // outside primitive should be an object to prevent JSON Hijacking
-        $responseData = ['todos' => $toDos];
-
-        $responseJsonData = $this->serializer->serialize($responseData, 'json', [
+        $responseJsonData = $this->serializer->serialize($toDos, 'json', [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
             },
