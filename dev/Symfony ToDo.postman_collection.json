@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "e4b9bec8-4ae3-4ebe-b6ea-c5f158bc8aec",
+		"name": "Symfony ToDo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add ToDo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Wäsche waschen\",\n    \"description\": \"Buntwäsche 60°\",\n    \"tasks\": [\n        {\n            \"name\": \"Pulver rein\"\n        },\n        {\n            \"name\": \"Programm einstellen\",\n            \"description\": \"Buntwäsche 60°\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://symfony-todo-rest.dev.local:8100/todos",
+					"protocol": "http",
+					"host": [
+						"symfony-todo-rest",
+						"dev",
+						"local"
+					],
+					"port": "8100",
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List ToDos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://symfony-todo-rest.dev.local:8100/todos",
+					"protocol": "http",
+					"host": [
+						"symfony-todo-rest",
+						"dev",
+						"local"
+					],
+					"port": "8100",
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show ToDo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://symfony-todo-rest.dev.local:8100/todos/10",
+					"protocol": "http",
+					"host": [
+						"symfony-todo-rest",
+						"dev",
+						"local"
+					],
+					"port": "8100",
+					"path": [
+						"todos",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update ToDo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Wäsche waschen\",\n    \"description\": \"Buntwäsche 60°\",\n    \"tasks\": [\n        {\n            \"name\": \"Pulver rein\"\n        },\n        {\n            \"name\": \"Programm einstellen\",\n            \"description\": \"Buntwäsche 60°\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://symfony-todo-rest.dev.local:8100/todos/10",
+					"protocol": "http",
+					"host": [
+						"symfony-todo-rest",
+						"dev",
+						"local"
+					],
+					"port": "8100",
+					"path": [
+						"todos",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ToDo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://symfony-todo-rest.dev.local:8100/todos/1",
+					"protocol": "http",
+					"host": [
+						"symfony-todo-rest",
+						"dev",
+						"local"
+					],
+					"port": "8100",
+					"path": [
+						"todos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
