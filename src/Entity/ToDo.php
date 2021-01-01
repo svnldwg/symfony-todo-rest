@@ -6,6 +6,7 @@ use App\Repository\ToDoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ToDoRepository::class)
@@ -20,7 +21,10 @@ class ToDo
      */
     private int $id;
 
-    /** @ORM\Column(type="string") */
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     */
     private string $name;
 
     /** @ORM\Column(type="text", nullable=true) */
@@ -29,6 +33,7 @@ class ToDo
     /**
      * @var Collection|Task[]
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true, cascade={"all"})
+     * @Assert\Valid
      */
     private Collection $tasks;
 
@@ -40,7 +45,7 @@ class ToDo
 
     public function __construct(string $name)
     {
-        $this->name = $name;
+        $this->name = $name; // @TODO prevent empty name (VO)
         $this->tasks = new ArrayCollection();
     }
 

@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\ToDo;
 use App\Repository\ToDoRepository;
+use App\Service\ToDoRequestValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -17,17 +19,20 @@ class ToDoController
 {
     private EntityManagerInterface $entityManager;
     private ToDoRepository $toDoRepository;
+    private ToDoRequestValidator $requestValidator;
     private SerializerInterface $serializer;
     private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ToDoRepository $toDoRepository,
+        ToDoRequestValidator $requestValidator,
         SerializerInterface $serializer,
         UrlGeneratorInterface $urlGenerator
     ) {
         $this->entityManager = $entityManager;
         $this->toDoRepository = $toDoRepository;
+        $this->requestValidator = $requestValidator;
         $this->serializer = $serializer;
         $this->urlGenerator = $urlGenerator;
     }
@@ -35,11 +40,18 @@ class ToDoController
     /**
      * @Route("/todos", name="add_todo", methods={"POST"})
      */
-    public function add(Request $request): JsonResponse
+    public function create(Request $request): JsonResponse
     {
-        // @TODO handle incorrect parameters gracefully (good exception messages, correct http status)
-        $toDo = $this->serializer->deserialize($request->getContent(), ToDo::class, 'json');
-        assert($toDo instanceof ToDo);
+        try {
+            $toDo = $this->requestValidator->validate($request->getContent());
+        } catch (BadRequestHttpException $exception) {
+            return new JsonResponse(
+                [
+                    'error' => json_decode($exception->getMessage(), true),
+                ],
+                $exception->getStatusCode(),
+            );
+        }
 
         $this->toDoRepository->save($toDo);
 
@@ -78,7 +90,7 @@ class ToDoController
     /**
      * @Route("/todos/{id<\d+>}", name="show_todo", methods={"GET"})
      */
-    public function show(int $id): Response
+    public function read(int $id): Response
     {
         $toDo = $this->toDoRepository->find($id);
 

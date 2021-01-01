@@ -21,6 +21,13 @@ Browse to directory `dev`
 
 `make setup`
 
+## Run
+
+1. Browse to directory `dev`
+1. `make start` to start docker containers
+1. Request endpoints (see Postman Collection (dev/Symfony ToDo.postman_collection.json))
+
+
 ## ToDo
 
 - Write tests
