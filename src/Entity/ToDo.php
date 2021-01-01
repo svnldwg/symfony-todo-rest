@@ -6,6 +6,7 @@ use App\Repository\ToDoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -24,24 +25,34 @@ class ToDo
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Groups({"request"})
      */
     private string $name;
 
-    /** @ORM\Column(type="text", nullable=true) */
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"request"})
+     */
     private ?string $description = null;
 
     /**
      * @var Collection|Task[]
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true, cascade={"all"})
      * @Assert\Valid
+     * @Groups({"request"})
      */
     private Collection $tasks;
 
-    /** @ORM\Column(type="datetime") */
-    private \DateTimeInterface $createdAt;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private \DateTimeInterface $createdAt; // @TODO should not be writable by POST/PUT
 
-    /** @ORM\Column(type="datetime") */
-    private \DateTimeInterface $updatedAt;
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"full"})
+     */
+    private \DateTimeInterface $updatedAt; // @TODO should not be writable by POST/PUT
 
     public function __construct(string $name)
     {
@@ -49,9 +60,14 @@ class ToDo
         $this->tasks = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function setName(string $name): self
@@ -117,11 +133,6 @@ class ToDo
         }
 
         return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getUpdatedAt(): \DateTimeInterface

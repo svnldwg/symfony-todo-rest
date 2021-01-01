@@ -6,6 +6,8 @@ use App\Entity\ToDo;
 use App\Repository\ToDoRepository;
 use App\Service\ToDoRequestValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +40,26 @@ class ToDoController
     }
 
     /**
-     * @Route("/todos", name="add_todo", methods={"POST"})
+     * Add a new ToDo item.
+     *
+     * @Route("/api/todos", name="add_todo", methods={"POST"})
+     * @OA\RequestBody(
+     *     request="ToDo",
+     *     description="The ToDo item to be created",
+     *     required=true,
+     *     @OA\JsonContent(
+     *         type="array",
+     *         @OA\Items(ref=@Model(type=ToDo::class, groups={"request"}))
+     *     )
+     * )
+     * @OA\Response(
+     *     response=201,
+     *     description="The created ToDo item",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=ToDo::class))
+     *     )
+     * )
      */
     public function create(Request $request): JsonResponse
     {
@@ -46,9 +67,7 @@ class ToDoController
             $toDo = $this->requestValidator->validate($request->getContent());
         } catch (BadRequestHttpException $exception) {
             return new JsonResponse(
-                [
-                    'error' => json_decode($exception->getMessage(), true),
-                ],
+                ['error' => json_decode($exception->getMessage(), true) ?? $exception->getMessage(), ],
                 $exception->getStatusCode(),
             );
         }
@@ -72,7 +91,9 @@ class ToDoController
     }
 
     /**
-     * @Route("/todos", name="list_todos", methods={"GET"})
+     * TODO: api doc
+     *
+     * @Route("/api/todos", name="list_todos", methods={"GET"})
      */
     public function list(): JsonResponse
     {
@@ -88,7 +109,9 @@ class ToDoController
     }
 
     /**
-     * @Route("/todos/{id<\d+>}", name="show_todo", methods={"GET"})
+     * TODO: api doc
+     *
+     * @Route("/api/todos/{id<\d+>}", name="show_todo", methods={"GET"})
      */
     public function read(int $id): Response
     {
@@ -104,7 +127,9 @@ class ToDoController
     }
 
     /**
-     * @Route("/todos/{id<\d+>}", name="delete_todo", methods={"DELETE"})
+     * TODO: api doc
+     *
+     * @Route("/api/todos/{id<\d+>}", name="delete_todo", methods={"DELETE"})
      */
     public function delete(int $id): Response
     {
@@ -120,18 +145,27 @@ class ToDoController
     }
 
     /**
-     * @Route("/todos/{id<\d+>}", name="update_todo", methods={"PUT"})
+     * TODO: api doc
+     *
+     * @Route("/api/todos/{id<\d+>}", name="update_todo", methods={"PUT"})
      */
     public function update(int $id, Request $request): Response
     {
+        try {
+            // @TODO https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
+            $toDoUpdate = $this->requestValidator->validate($request->getContent());
+        } catch (BadRequestHttpException $exception) {
+            return new JsonResponse(
+                ['error' => json_decode($exception->getMessage(), true) ?? $exception->getMessage(), ],
+                $exception->getStatusCode(),
+            );
+        }
+
         $toDo = $this->toDoRepository->find($id);
 
         if ($toDo === null) {
             return new Response(null, Response::HTTP_NOT_FOUND);
         }
-
-        $toDoUpdate = $this->serializer->deserialize($request->getContent(), ToDo::class, 'json');
-        assert($toDoUpdate instanceof ToDo);
 
         $toDo->setName($toDoUpdate->getName())
             ->setDescription($toDoUpdate->getDescription())

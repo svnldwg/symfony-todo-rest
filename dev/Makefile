@@ -104,3 +104,6 @@ make-migration:
 doctrine-migrate:
 	$(CLI) php bin/console doctrine:migrations:migrate --no-interaction
 .PHONY: doctrine-migrate
+
+clear-cache:
+	$(CLI) php bin/console cache:clear
