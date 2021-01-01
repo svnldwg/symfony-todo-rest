@@ -21,6 +21,7 @@ class Task
     private int $id;
 
     /**
+     * @TODO: prevent empty strings on PHP level
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Groups({"request"})
@@ -39,11 +40,6 @@ class Task
      * @Ignore()
      */
     private ?ToDo $todo;
-
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
 
     public function getId(): int
     {

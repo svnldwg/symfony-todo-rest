@@ -23,6 +23,7 @@ class ToDo
     private int $id;
 
     /**
+     * @TODO prevent empty name (VO)
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Groups({"request"})
@@ -54,9 +55,8 @@ class ToDo
      */
     private \DateTimeInterface $updatedAt; // @TODO should not be writable by POST/PUT
 
-    public function __construct(string $name)
+    public function __construct()
     {
-        $this->name = $name; // @TODO prevent empty name (VO)
         $this->tasks = new ArrayCollection();
     }
 
