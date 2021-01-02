@@ -47,19 +47,14 @@ class ToDoController
      *     request="ToDo",
      *     description="The ToDo item to be created",
      *     required=true,
-     *     @OA\JsonContent(
-     *         type="array",
-     *         @OA\Items(ref=@Model(type=ToDo::class, groups={"request"}))
-     *     )
+     *     @OA\JsonContent(ref=@Model(type=ToDo::class, groups={"request"}))
      * )
      * @OA\Response(
      *     response=201,
      *     description="The created ToDo item",
-     *     @OA\JsonContent(
-     *        type="array",
-     *        @OA\Items(ref=@Model(type=ToDo::class))
-     *     )
+     *     @OA\JsonContent(ref=@Model(type=ToDo::class))
      * )
+     * @OA\Response(response=400, description="Bad Request")
      */
     public function create(Request $request): JsonResponse
     {
