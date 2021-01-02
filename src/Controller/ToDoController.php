@@ -40,7 +40,7 @@ class ToDoController
     }
 
     /**
-     * Add a new ToDo item.
+     * Add a new ToDo item
      *
      * @Route("/api/todos", name="add_todo", methods={"POST"})
      * @OA\RequestBody(
@@ -86,9 +86,17 @@ class ToDoController
     }
 
     /**
-     * TODO: api doc
+     * List all ToDo items
      *
      * @Route("/api/todos", name="list_todos", methods={"GET"})
+     * @OA\Response(
+     *     response=200,
+     *     description="All existing ToDo items",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=ToDo::class))
+     *     )
+     * )
      */
     public function list(): JsonResponse
     {
@@ -104,9 +112,15 @@ class ToDoController
     }
 
     /**
-     * TODO: api doc
+     * Show a single ToDo item
      *
      * @Route("/api/todos/{id<\d+>}", name="show_todo", methods={"GET"})
+     * @OA\Response(
+     *     response=200,
+     *     description="ToDo item",
+     *     @OA\JsonContent(ref=@Model(type=ToDo::class))
+     * )
+     * @OA\Response(response=404, description="ToDo item not found")
      */
     public function read(int $id): Response
     {
