@@ -122,14 +122,8 @@ class ToDoController
      * )
      * @OA\Response(response=404, description="ToDo item not found")
      */
-    public function read(int $id): Response
+    public function show(ToDo $toDo): JsonResponse
     {
-        $toDo = $this->toDoRepository->find($id);
-
-        if ($toDo === null) {
-            return new Response(null, Response::HTTP_NOT_FOUND);
-        }
-
         $responseJsonData = $this->convertToDoToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
@@ -140,14 +134,8 @@ class ToDoController
      *
      * @Route("/api/todos/{id<\d+>}", name="delete_todo", methods={"DELETE"})
      */
-    public function delete(int $id): Response
+    public function delete(ToDo $toDo): Response
     {
-        $toDo = $this->toDoRepository->find($id);
-
-        if ($toDo === null) {
-            return new Response(null, Response::HTTP_NOT_FOUND);
-        }
-
         $this->toDoRepository->delete($toDo);
 
         return new Response(null, Response::HTTP_NO_CONTENT);
