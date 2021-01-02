@@ -30,6 +30,7 @@ class ToDoRequestValidator
         }
 
         try {
+            // @TODO: trim name & description ("    ")
             $toDo = $this->serializer->deserialize(
                 $data,
                 ToDo::class,

@@ -27,6 +27,7 @@ Browse to directory `dev`
 1. `make start` to start docker containers
 1. Request endpoints (see Postman Collection (dev/Symfony ToDo.postman_collection.json))
 
+See API Documentation: http://symfony-todo-rest.dev.local:8100/api/doc
 
 ## ToDo
 
