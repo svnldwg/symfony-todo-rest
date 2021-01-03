@@ -5,13 +5,9 @@ export PROJECT_DOMAIN = ${PROJECT_NAME}.dev.local
 export PROJECT_NAME_UNDERSCORE = $(subst  -,_,${PROJECT_NAME})
 export SHELL = bash
 
-export POSTGRES_HOST = ${PROJECT_NAME}-database
 export POSTGRES_PASSWORD = pass
 export POSTGRES_USER = ${PROJECT_NAME_UNDERSCORE}
 export POSTGRES_DB = ${PROJECT_NAME_UNDERSCORE}
-
-#xdebug
-export HOST_PORT = 9000
 
 #DOCKER COMPOSE SETTINGS
 export PHP_IDE_CONFIG = serverName=${PROJECT_DOMAIN}
@@ -85,6 +81,8 @@ phpunit: ##@development run phpunit
 codecheck: php-cs-fixer phpstan phpunit
 .PHONY: codecheck
 
+pre-commit: php-cs-fixer update-api-doc behat phpstan
+
 symfony-autowiring:
 	$(CLI) php bin/console debug:autowiring
 .PHONY: symfony-autowiring
@@ -107,3 +105,13 @@ doctrine-migrate:
 
 clear-cache:
 	$(CLI) php bin/console cache:clear
+	$(CLI) php bin/console --env=test cache:clear
+
+test: stop start behat
+
+behat:
+	$(CLI) php vendor/bin/behat -f pretty --colors
+.PHONY: behat
+
+update-api-doc:
+	$(CLI) php bin/console nelmio:apidoc:dump > apidoc.json

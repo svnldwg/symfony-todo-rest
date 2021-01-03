@@ -52,7 +52,7 @@ class ToDoRequestValidator
             $errorMessages = [];
             foreach ($errors as $error) {
                 assert($error instanceof ConstraintViolation);
-                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+                $errorMessages[] = sprintf('%s: %s', $error->getPropertyPath(), $error->getMessage());
             }
 
             throw new BadRequestHttpException(json_encode($errorMessages, JSON_THROW_ON_ERROR));

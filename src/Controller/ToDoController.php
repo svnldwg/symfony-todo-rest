@@ -62,7 +62,7 @@ class ToDoController
             $toDo = $this->requestValidator->validate($request->getContent());
         } catch (BadRequestHttpException $exception) {
             return new JsonResponse(
-                ['error' => json_decode($exception->getMessage(), true) ?? $exception->getMessage(), ],
+                ['errors' => json_decode($exception->getMessage(), true) ?? [$exception->getMessage()], ],
                 $exception->getStatusCode(),
             );
         }
@@ -100,6 +100,7 @@ class ToDoController
      */
     public function list(): JsonResponse
     {
+        // @TODO write test
         $toDos = $this->toDoRepository->findAll();
 
         $responseJsonData = $this->serializer->serialize($toDos, 'json', [
@@ -124,6 +125,7 @@ class ToDoController
      */
     public function show(ToDo $toDo): JsonResponse
     {
+        // @TODO write test
         $responseJsonData = $this->convertToDoToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
@@ -136,6 +138,7 @@ class ToDoController
      */
     public function delete(ToDo $toDo): Response
     {
+        // @TODO write test
         $this->toDoRepository->delete($toDo);
 
         return new Response(null, Response::HTTP_NO_CONTENT);
@@ -148,6 +151,7 @@ class ToDoController
      */
     public function update(int $id, Request $request): Response
     {
+        // @TODO write test
         try {
             // @TODO https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
             $toDoUpdate = $this->requestValidator->validate($request->getContent());

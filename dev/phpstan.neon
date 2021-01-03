@@ -4,5 +4,9 @@ includes:
 parameters:
   level: max
   inferPrivatePropertyTypeFromConstructor: true
+  checkMissingIterableValueType: false
+  checkGenericClassInNonGenericObjectType: false
   paths:
+    - %currentWorkingDirectory%/migrations/
     - %currentWorkingDirectory%/src/
+    - %currentWorkingDirectory%/tests/

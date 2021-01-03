@@ -1,7 +1,11 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . '/../src')
+    ->in([
+        __DIR__ . '/../src',
+        __DIR__ . '/../migrations',
+        __DIR__ . '/../tests',
+    ])
     ->name('*.php')->name('*.phtml')
 ;
 

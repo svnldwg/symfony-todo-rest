@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Subscriber;
-
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +28,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException'
+            KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
 }

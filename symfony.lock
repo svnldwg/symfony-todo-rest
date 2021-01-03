@@ -1,4 +1,46 @@
 {
+    "adamquaile/behat-command-runner-extension": {
+        "version": "v0.1.1"
+    },
+    "behat/behat": {
+        "version": "v3.8.1"
+    },
+    "behat/gherkin": {
+        "version": "v4.6.2"
+    },
+    "behat/mink": {
+        "version": "v1.8.1"
+    },
+    "behat/transliterator": {
+        "version": "v1.3.0"
+    },
+    "behatch/contexts": {
+        "version": "3.3.0"
+    },
+    "friends-of-behat/mink-browserkit-driver": {
+        "version": "v1.4.0"
+    },
+    "friends-of-behat/mink-extension": {
+        "version": "v2.4.0"
+    },
+    "friends-of-behat/symfony-extension": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "3d21344765fd3440a85bdd27d4cada186ec628bd"
+        },
+        "files": [
+            "behat.yml.dist",
+            "config/services_test.yaml",
+            "features/demo.feature",
+            "tests/Behat/DemoContext.php"
+        ]
+    },
+    "justinrainbow/json-schema": {
+        "version": "5.2.10"
+    },
     "nelmio/api-doc-bundle": {
         "version": "3.0",
         "recipe": {
@@ -24,6 +66,15 @@
     "symfony/asset": {
         "version": "v5.2.1"
     },
+    "symfony/browser-kit": {
+        "version": "v5.2.1"
+    },
+    "symfony/css-selector": {
+        "version": "v5.2.1"
+    },
+    "symfony/dom-crawler": {
+        "version": "v5.2.1"
+    },
     "symfony/flex": {
         "version": "1.0",
         "recipe": {
@@ -41,6 +92,22 @@
     },
     "symfony/property-info": {
         "version": "v5.2.1"
+    },
+    "symfony/proxy-manager-bridge": {
+        "version": "v5.2.1"
+    },
+    "symfony/translation": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "2ad9d2545bce8ca1a863e50e92141f0b9d87ffcd"
+        },
+        "files": [
+            "config/packages/translation.yaml",
+            "translations/.gitignore"
+        ]
     },
     "symfony/translation-contracts": {
         "version": "v2.3.0"
