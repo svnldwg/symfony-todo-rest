@@ -17,6 +17,7 @@ class Task
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
+     * @Ignore()
      */
     private int $id;
 
