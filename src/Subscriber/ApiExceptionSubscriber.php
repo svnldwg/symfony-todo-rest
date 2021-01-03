@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -35,6 +36,13 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
                 null,
                 $throwable->getStatusCode(),
                 $throwable->getHeaders(),
+            );
+        }
+
+        if ($throwable instanceof BadRequestHttpException) {
+            return new JsonResponse(
+                ['errors' => json_decode($throwable->getMessage(), true) ?? [$throwable->getMessage()], ],
+                $throwable->getStatusCode(),
             );
         }
 

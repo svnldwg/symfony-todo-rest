@@ -58,14 +58,7 @@ class ToDoController
      */
     public function create(Request $request): JsonResponse
     {
-        try {
-            $toDo = $this->requestValidator->validate($request->getContent());
-        } catch (BadRequestHttpException $exception) {
-            return new JsonResponse(
-                ['errors' => json_decode($exception->getMessage(), true) ?? [$exception->getMessage()], ],
-                $exception->getStatusCode(),
-            );
-        }
+        $toDo = $this->requestValidator->validate($request->getContent());
 
         $this->toDoRepository->save($toDo);
 
@@ -147,24 +140,10 @@ class ToDoController
      *
      * @Route("/api/todos/{id<\d+>}", name="update_todo", methods={"PUT"})
      */
-    public function update(int $id, Request $request): Response
+    public function update(ToDo $toDo, Request $request): Response
     {
-        // @TODO write test
-        try {
-            // @TODO https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
-            $toDoUpdate = $this->requestValidator->validate($request->getContent());
-        } catch (BadRequestHttpException $exception) {
-            return new JsonResponse(
-                ['error' => json_decode($exception->getMessage(), true) ?? $exception->getMessage(), ],
-                $exception->getStatusCode(),
-            );
-        }
-
-        $toDo = $this->toDoRepository->find($id);
-
-        if ($toDo === null) {
-            return new Response(null, Response::HTTP_NOT_FOUND);
-        }
+        // @TODO https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
+        $toDoUpdate = $this->requestValidator->validate($request->getContent());
 
         $toDo->setName($toDoUpdate->getName())
             ->setDescription($toDoUpdate->getDescription())
