@@ -21,7 +21,6 @@ class Task
     private int $id;
 
     /**
-     * @TODO: prevent empty strings on PHP level
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(normalizer = "trim")
      * @Groups({"request"})
@@ -35,7 +34,7 @@ class Task
     private ?string $description = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity=ToDo::class, inversedBy="tasks")
+     * @ORM\ManyToOne(targetEntity="ToDo", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
      * @Ignore()
      */

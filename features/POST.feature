@@ -1,9 +1,5 @@
+@POST
 Feature: Test creating a ToDo item and also possible exceptions
-
-    Scenario: Call a not found route
-        When I add "Content-Type" header equal to "application/json"
-        And I send a "GET" request to "/api/todos/not-found-route"
-        Then the response status code should be 404
 
     Scenario: Try to create a ToDo with missing "name" field
         When I add "Content-Type" header equal to "application/json"
@@ -13,6 +9,7 @@ Feature: Test creating a ToDo item and also possible exceptions
             "description": "my first ToDo but I forgot the name"
         }
         """
+
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should be equal to:
@@ -32,6 +29,7 @@ Feature: Test creating a ToDo item and also possible exceptions
             "name": ""
         }
         """
+
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should be equal to:
@@ -56,6 +54,7 @@ Feature: Test creating a ToDo item and also possible exceptions
             ]
         }
         """
+
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should be equal to:
@@ -77,6 +76,7 @@ Feature: Test creating a ToDo item and also possible exceptions
             "unknown": "unknown"
         }
         """
+
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should be equal to:
@@ -101,6 +101,7 @@ Feature: Test creating a ToDo item and also possible exceptions
             ]
         }
         """
+
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should be equal to:
@@ -122,8 +123,11 @@ Feature: Test creating a ToDo item and also possible exceptions
             "description": "some description"
         }
         """
+
         Then the response status code should be 201
+        And the header "Location" should be equal to "http://localhost/api/todos/1"
         And the response should be in JSON
+
         And the JSON node "id" should be equal to the number 1
         And the JSON node "name" should be equal to the string "some name"
         And the JSON node "description" should be equal to the string "some description"

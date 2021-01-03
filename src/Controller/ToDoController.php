@@ -100,7 +100,6 @@ class ToDoController
      */
     public function list(): JsonResponse
     {
-        // @TODO write test
         $toDos = $this->toDoRepository->findAll();
 
         $responseJsonData = $this->serializer->serialize($toDos, 'json', [
@@ -125,7 +124,6 @@ class ToDoController
      */
     public function show(ToDo $toDo): JsonResponse
     {
-        // @TODO write test
         $responseJsonData = $this->convertToDoToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);

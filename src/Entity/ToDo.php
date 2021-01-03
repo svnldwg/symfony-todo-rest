@@ -23,7 +23,6 @@ class ToDo
     private int $id;
 
     /**
-     * @TODO prevent empty name (VO)
      * @ORM\Column(type="string")
      * @Assert\NotBlank(normalizer = "trim")
      * @Groups({"request"})
@@ -38,7 +37,7 @@ class ToDo
 
     /**
      * @var Collection|Task[]
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="todo", orphanRemoval=true, cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="todo", orphanRemoval=true, cascade={"all"})
      * @Assert\Valid
      * @Groups({"request"})
      */
@@ -47,13 +46,12 @@ class ToDo
     /**
      * @ORM\Column(type="datetime")
      */
-    private \DateTimeInterface $createdAt; // @TODO should not be writable by POST/PUT
+    private \DateTimeInterface $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"full"})
      */
-    private \DateTimeInterface $updatedAt; // @TODO should not be writable by POST/PUT
+    private \DateTimeInterface $updatedAt;
 
     public function __construct()
     {

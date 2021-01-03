@@ -7,20 +7,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
     public function onKernelException(ExceptionEvent $event): void
     {
-        $exception = $event->getThrowable();
+        $throwable = $event->getThrowable();
 
-        // @TODO: use json format (same format for all exceptions)
-        // @TODO: 404 Not found: empty response
-        $response = new JsonResponse(
-            $exception->getMessage(),
-            $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR,
-        );
+        $response = $this->createResponse($throwable);
 
         $event->setResponse($response);
     }
@@ -30,5 +26,21 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
         ];
+    }
+
+    private function createResponse(\Throwable $throwable): Response
+    {
+        if ($throwable instanceof NotFoundHttpException) {
+            return new Response(
+                null,
+                $throwable->getStatusCode(),
+                $throwable->getHeaders(),
+            );
+        }
+
+        return new JsonResponse(
+            get_class($throwable) . $throwable->getMessage(),
+            $throwable instanceof HttpExceptionInterface ? $throwable->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR,
+        );
     }
 }

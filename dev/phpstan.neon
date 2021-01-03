@@ -9,4 +9,5 @@ parameters:
   paths:
     - %currentWorkingDirectory%/migrations/
     - %currentWorkingDirectory%/src/
-    - %currentWorkingDirectory%/tests/
+  ignoreErrors:
+    - '~Parameter #1 \$data of method App\\Service\\ToDoRequestValidator::validate\(\) expects string, resource\|string given.~'

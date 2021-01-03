@@ -19,6 +19,6 @@ default:
                     symfony: ~
         AdamQuaile\Behat\CommandRunnerExtension:
               beforeFeature:
-                  - bin/console --env=test doctrine:database:drop --force --if-exists
-                  - bin/console --env=test doctrine:database:create
+                  - bin/console --env=test doctrine:schema:drop --force
+                  - bin/console --env=test doctrine:schema:create
                   - bin/console --env=test doctrine:migrations:migrate -n
