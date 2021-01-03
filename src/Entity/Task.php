@@ -23,7 +23,7 @@ class Task
     /**
      * @TODO: prevent empty strings on PHP level
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(normalizer = "trim")
      * @Groups({"request"})
      */
     private string $name;

@@ -25,7 +25,7 @@ class ToDo
     /**
      * @TODO prevent empty name (VO)
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(normalizer = "trim")
      * @Groups({"request"})
      */
     private string $name;

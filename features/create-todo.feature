@@ -43,6 +43,31 @@ Feature: Test creating a ToDo item and also possible exceptions
         }
         """
 
+    Scenario: Try to create a ToDo with only spaces in "name" field
+        When I add "Content-Type" header equal to "application/json"
+        And I send a "POST" request to "/api/todos" with body:
+        """
+        {
+            "name": "   ",
+            "tasks": [
+                {
+                    "name": "    "
+                }
+            ]
+        }
+        """
+        Then the response status code should be 400
+        And the response should be in JSON
+        And the JSON should be equal to:
+        """
+        {
+            "errors": [
+                "name: This value should not be blank.",
+                "tasks[0].name: This value should not be blank."
+            ]
+        }
+        """
+
     Scenario: Try to create a ToDo with unknown field
         When I add "Content-Type" header equal to "application/json"
         And I send a "POST" request to "/api/todos" with body:
