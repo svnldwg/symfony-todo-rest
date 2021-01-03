@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Behat;
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\Environment\ContextEnvironment;
-use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 final class JsonContext implements Context

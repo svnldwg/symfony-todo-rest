@@ -120,7 +120,10 @@ Feature: Test creating a ToDo item and also possible exceptions
         """
         {
             "name": "some name",
-            "description": "some description"
+            "description": "some description",
+            "tasks": [
+                {"name": "some task"}
+            ]
         }
         """
 
@@ -131,6 +134,10 @@ Feature: Test creating a ToDo item and also possible exceptions
         And the JSON node "id" should be equal to the number 1
         And the JSON node "name" should be equal to the string "some name"
         And the JSON node "description" should be equal to the string "some description"
-        And the JSON node "tasks" should have 0 elements
+        And the JSON node "tasks" should have 1 element
+        And the JSON node "tasks[0].id" should not exist
+        And the JSON node "tasks[0].todo" should not exist
+        And the JSON node "tasks[0].name" should be equal to the string "some task"
+        And the JSON node "tasks[0].description" should be null
         And the JSON node "createdAt" should be a datetime
         And the JSON node "updatedAt" should be a datetime

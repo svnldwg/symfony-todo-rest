@@ -122,9 +122,7 @@ class ToDo
      */
     public function setTasks(Collection $tasks): self
     {
-        foreach ($this->tasks as $task) {
-            $this->removeTask($task);
-        }
+        $this->tasks->clear();
 
         foreach ($tasks as $task) {
             $this->addTask($task);
