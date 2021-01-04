@@ -47,7 +47,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         }
 
         return new JsonResponse(
-            get_class($throwable) . $throwable->getMessage(),
+            ['message' => $throwable->getMessage()],
             $throwable instanceof HttpExceptionInterface ? $throwable->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR,
         );
     }
