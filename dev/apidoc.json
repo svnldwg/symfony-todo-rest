@@ -8,6 +8,9 @@
     "paths": {
         "\/api\/todos": {
             "get": {
+                "tags": [
+                    "ToDo"
+                ],
                 "summary": "List all ToDo items",
                 "operationId": null,
                 "responses": {
@@ -23,10 +26,23 @@
                                 }
                             }
                         }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/ErrorModel"
+                                }
+                            }
+                        }
                     }
                 }
             },
             "post": {
+                "tags": [
+                    "ToDo"
+                ],
                 "summary": "Add a new ToDo item",
                 "operationId": null,
                 "requestBody": {
@@ -53,13 +69,33 @@
                         }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Bad Request",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/BadRequestError"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/ErrorModel"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
         "\/api\/todos\/{id}": {
             "get": {
+                "tags": [
+                    "ToDo"
+                ],
                 "summary": "Show a single ToDo item",
                 "operationId": null,
                 "parameters": [
@@ -86,11 +122,24 @@
                     },
                     "404": {
                         "description": "ToDo item not found"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/ErrorModel"
+                                }
+                            }
+                        }
                     }
                 }
             },
             "put": {
-                "summary": "TODO: api doc",
+                "tags": [
+                    "ToDo"
+                ],
+                "summary": "Update existing ToDo",
                 "operationId": null,
                 "parameters": [
                     {
@@ -103,14 +152,56 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "request": "ToDo",
+                    "description": "The ToDo item to be updated",
+                    "required": true,
+                    "content": {
+                        "application\/json": {
+                            "schema": {
+                                "$ref": "#\/components\/schemas\/ToDo2"
+                            }
+                        }
+                    }
+                },
                 "responses": {
+                    "200": {
+                        "description": "The updated ToDo item",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/ToDo"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/BadRequestError"
+                                }
+                            }
+                        }
+                    },
                     "default": {
-                        "description": ""
+                        "description": "Unexpected error",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/ErrorModel"
+                                }
+                            }
+                        }
                     }
                 }
             },
             "delete": {
-                "summary": "TODO: api doc",
+                "tags": [
+                    "ToDo"
+                ],
+                "summary": "Delete a ToDo item",
                 "operationId": null,
                 "parameters": [
                     {
@@ -124,8 +215,21 @@
                     }
                 ],
                 "responses": {
+                    "204": {
+                        "description": "ToDo deleted"
+                    },
+                    "404": {
+                        "description": "ToDo item not found"
+                    },
                     "default": {
-                        "description": ""
+                        "description": "Unexpected error",
+                        "content": {
+                            "application\/json": {
+                                "schema": {
+                                    "$ref": "#\/components\/schemas\/ErrorModel"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -143,6 +247,27 @@
     },
     "components": {
         "schemas": {
+            "BadRequestError": {
+                "description": "Bad request error model",
+                "properties": {
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorModel": {
+                "description": "General error model",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "ToDo": {
                 "required": [
                     "name"

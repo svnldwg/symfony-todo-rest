@@ -42,6 +42,7 @@ class ToDoController
      * Add a new ToDo item
      *
      * @Route("/api/todos", name="add_todo", methods={"POST"})
+     * @OA\Tag(name="ToDo")
      * @OA\RequestBody(
      *     request="ToDo",
      *     description="The ToDo item to be created",
@@ -53,7 +54,12 @@ class ToDoController
      *     description="The created ToDo item",
      *     @OA\JsonContent(ref=@Model(type=ToDo::class))
      * )
-     * @OA\Response(response=400, description="Bad Request")
+     * @OA\Response(
+     *     response=400,
+     *     description="Bad Request",
+     *     @OA\JsonContent(ref="#/components/schemas/BadRequestError")
+     * ),
+     * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
     public function create(Request $request): JsonResponse
     {
@@ -81,6 +87,7 @@ class ToDoController
      * List all ToDo items
      *
      * @Route("/api/todos", name="list_todos", methods={"GET"})
+     * @OA\Tag(name="ToDo")
      * @OA\Response(
      *     response=200,
      *     description="All existing ToDo items",
@@ -88,7 +95,8 @@ class ToDoController
      *        type="array",
      *        @OA\Items(ref=@Model(type=ToDo::class))
      *     )
-     * )
+     * ),
+     * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
     public function list(): JsonResponse
     {
@@ -107,12 +115,14 @@ class ToDoController
      * Show a single ToDo item
      *
      * @Route("/api/todos/{id<\d+>}", name="show_todo", methods={"GET"})
+     * @OA\Tag(name="ToDo")
      * @OA\Response(
      *     response=200,
      *     description="ToDo item",
      *     @OA\JsonContent(ref=@Model(type=ToDo::class))
      * )
-     * @OA\Response(response=404, description="ToDo item not found")
+     * @OA\Response(response=404, description="ToDo item not found"),
+     * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
     public function show(ToDo $toDo): JsonResponse
     {
@@ -122,9 +132,16 @@ class ToDoController
     }
 
     /**
-     * TODO: api doc
+     * Delete a ToDo item
      *
      * @Route("/api/todos/{id<\d+>}", name="delete_todo", methods={"DELETE"})
+     * @OA\Tag(name="ToDo")
+     * @OA\Response(
+     *     response=204,
+     *     description="ToDo deleted"
+     * )
+     * @OA\Response(response=404, description="ToDo item not found"),
+     * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
     public function delete(ToDo $toDo): Response
     {
@@ -135,9 +152,27 @@ class ToDoController
     }
 
     /**
-     * TODO: api doc
+     * Update existing ToDo
      *
      * @Route("/api/todos/{id<\d+>}", name="update_todo", methods={"PUT"})
+     * @OA\Tag(name="ToDo")
+     * @OA\RequestBody(
+     *     request="ToDo",
+     *     description="The ToDo item to be updated",
+     *     required=true,
+     *     @OA\JsonContent(ref=@Model(type=ToDo::class, groups={"request"}))
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="The updated ToDo item",
+     *     @OA\JsonContent(ref=@Model(type=ToDo::class))
+     * )
+     * @OA\Response(
+     *     response=400,
+     *     description="Bad Request",
+     *     @OA\JsonContent(ref="#/components/schemas/BadRequestError")
+     * ),
+     * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
     public function update(ToDo $toDo, Request $request): Response
     {
@@ -155,11 +190,6 @@ class ToDoController
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
 
-    /**
-     * @param ToDo $toDo
-     *
-     * @return string
-     */
     private function convertToDoToJson(ToDo $toDo): string
     {
         return $this->serializer->serialize($toDo, 'json', [

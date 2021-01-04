@@ -4,6 +4,22 @@ nelmio_api_doc:
             title: RESTful ToDo
             description: Simple RESTful API for ToDo lists
             version: 1.0.0
+        components:
+            schemas:
+                BadRequestError:
+                    description: "Bad request error model"
+                    type: object
+                    properties:
+                        errors:
+                            type: array
+                            items:
+                                type: string
+                ErrorModel:
+                    description: "General error model"
+                    type: object
+                    properties:
+                        message:
+                            type: string
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
