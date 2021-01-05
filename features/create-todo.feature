@@ -1,4 +1,4 @@
-@POST
+@create
 Feature: Test creating a ToDo item and also possible exceptions
 
     Scenario: Try to create a ToDo with missing "name" field

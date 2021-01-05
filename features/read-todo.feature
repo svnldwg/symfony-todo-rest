@@ -1,15 +1,13 @@
-@GET
+@read
 Feature: Test requesting list of created ToDo items and single ToDo item via GET
 
   Scenario: Call a not found route
-    When I add "Content-Type" header equal to "application/json"
     And I send a "GET" request to "/api/todos/not-found-route"
 
     Then the response status code should be 404
     And the response should be empty
 
   Scenario: List of ToDos is empty
-    When I add "Content-Type" header equal to "application/json"
     And I send a "GET" request to "/api/todos"
 
     Then the response should be in JSON
@@ -38,7 +36,6 @@ Feature: Test requesting list of created ToDo items and single ToDo item via GET
       | a2        | desc2        | task2    |
 
   Scenario: Request list of all ToDos
-    When I add "Content-Type" header equal to "application/json"
     And I send a "GET" request to "/api/todos"
 
     Then the response should be in JSON
@@ -62,7 +59,6 @@ Feature: Test requesting list of created ToDo items and single ToDo item via GET
     And the JSON node "[1].updatedAt" should be a datetime
 
   Scenario: Request a single existing ToDo
-    When I add "Content-Type" header equal to "application/json"
     And I send a "GET" request to "/api/todos/1"
 
     Then the response should be in JSON
@@ -75,7 +71,6 @@ Feature: Test requesting list of created ToDo items and single ToDo item via GET
     And the JSON node "tasks[0].description" should be null
 
   Scenario: Request a single not existing ToDo
-    When I add "Content-Type" header equal to "application/json"
     And I send a "GET" request to "/api/todos/1000"
 
     Then the response status code should be 404

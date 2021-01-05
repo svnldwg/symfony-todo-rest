@@ -142,7 +142,6 @@ class ToDoController
      */
     public function delete(ToDo $toDo): Response
     {
-        // @TODO write test
         $this->toDoRepository->delete($toDo);
 
         return new Response(null, Response::HTTP_NO_CONTENT);
