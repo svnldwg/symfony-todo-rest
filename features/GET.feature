@@ -36,7 +36,6 @@ Feature: Test requesting list of created ToDo items and single ToDo item via GET
       | name      | description  | taskName |
       | a1        | desc1        | task1    |
       | a2        | desc2        | task2    |
-      | Bewerben  | bei Chefkoch | Task3    |
 
   Scenario: Request list of all ToDos
     When I add "Content-Type" header equal to "application/json"
@@ -44,7 +43,7 @@ Feature: Test requesting list of created ToDo items and single ToDo item via GET
 
     Then the response should be in JSON
     And the response status code should be 200
-    And the JSON node "root" should have 3 elements
+    And the JSON node "root" should have 2 elements
 
     And the JSON node "[0].id" should be equal to the number 1
     And the JSON node "[0].name" should be equal to the string "a1"
@@ -61,15 +60,6 @@ Feature: Test requesting list of created ToDo items and single ToDo item via GET
     And the JSON node "[1].tasks[0].description" should be null
     And the JSON node "[1].createdAt" should be a datetime
     And the JSON node "[1].updatedAt" should be a datetime
-
-    And the JSON node "[2].id" should be equal to the number 3
-    And the JSON node "[2].name" should be equal to the string "Bewerben"
-    And the JSON node "[2].description" should be equal to the string "bei Chefkoch"
-    And the JSON node "[2].tasks" should have 1 elements
-    And the JSON node "[2].tasks[0].name" should be equal to the string "Task3"
-    And the JSON node "[2].tasks[0].description" should be null
-    And the JSON node "[2].createdAt" should be a datetime
-    And the JSON node "[2].updatedAt" should be a datetime
 
   Scenario: Request a single existing ToDo
     When I add "Content-Type" header equal to "application/json"
