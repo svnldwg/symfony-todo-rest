@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\ToDo;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExtraAttributesException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -23,21 +24,26 @@ class ToDoRequestValidator
         $this->serializer = $serializer;
     }
 
-    public function validate(string $data): ToDo
+    public function deserializeIntoExisting(string $requestData, ToDo $toDo): void
     {
-        if (!$data) {
+        $this->deserialize($requestData, [AbstractNormalizer::OBJECT_TO_POPULATE => $toDo]);
+    }
+
+    public function deserialize(string $requestData, $serializationContext = []): ToDo
+    {
+        if (!$requestData) {
             throw new BadRequestHttpException('Empty body.');
         }
 
         try {
             $toDo = $this->serializer->deserialize(
-                $data,
+                $requestData,
                 ToDo::class,
-                'json',
-                [
+                JsonEncoder::FORMAT,
+                array_merge([
                     AbstractNormalizer::GROUPS                 => 'request',
                     AbstractNormalizer::ALLOW_EXTRA_ATTRIBUTES => false,
-                ]
+                ], $serializationContext)
             );
         } catch (ExtraAttributesException $exception) {
             throw new BadRequestHttpException($exception->getMessage());

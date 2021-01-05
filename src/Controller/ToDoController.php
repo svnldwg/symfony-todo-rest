@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -63,21 +64,22 @@ class ToDoController
      */
     public function create(Request $request): JsonResponse
     {
-        $toDo = $this->requestValidator->validate($request->getContent());
+        $toDo = $this->requestValidator->deserialize($request->getContent());
 
         $this->toDoRepository->save($toDo);
 
-        $todoJson = $this->convertToDoToJson($toDo);
+        $responseJsonData = $this->serializeToJson($toDo);
+        $resourceUrl = $this->urlGenerator->generate(
+            'show_todo',
+            ['id' => $toDo->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
         return new JsonResponse(
-            $todoJson,
+            $responseJsonData,
             Response::HTTP_CREATED,
             [
-                'Location' => $this->urlGenerator->generate(
-                    'show_todo',
-                    ['id' => $toDo->getId()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                ),
+                'Location' => $resourceUrl,
             ],
             true
         );
@@ -102,7 +104,7 @@ class ToDoController
     {
         $toDos = $this->toDoRepository->findAll();
 
-        $responseJsonData = $this->serializer->serialize($toDos, 'json', [
+        $responseJsonData = $this->serializer->serialize($toDos, JsonEncoder::FORMAT, [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
             },
@@ -126,7 +128,7 @@ class ToDoController
      */
     public function show(ToDo $toDo): JsonResponse
     {
-        $responseJsonData = $this->convertToDoToJson($toDo);
+        $responseJsonData = $this->serializeToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
@@ -176,23 +178,18 @@ class ToDoController
      */
     public function update(ToDo $toDo, Request $request): Response
     {
-        // @TODO https://symfony.com/doc/current/components/serializer.html#deserializing-in-an-existing-object
-        $toDoUpdate = $this->requestValidator->validate($request->getContent());
-
-        $toDo->setName($toDoUpdate->getName())
-            ->setDescription($toDoUpdate->getDescription())
-            ->setTasks($toDoUpdate->getTasks());
+        $this->requestValidator->deserializeIntoExisting($request->getContent(), $toDo);
 
         $this->entityManager->flush();
 
-        $responseJsonData = $this->convertToDoToJson($toDo);
+        $responseJsonData = $this->serializeToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
 
-    private function convertToDoToJson(ToDo $toDo): string
+    private function serializeToJson(ToDo $toDo): string
     {
-        return $this->serializer->serialize($toDo, 'json', [
+        return $this->serializer->serialize($toDo, JsonEncoder::FORMAT, [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
                 return $object->getId();
             },

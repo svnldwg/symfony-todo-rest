@@ -112,6 +112,9 @@ class ToDo
             if ($task->getTodo() === $this) {
                 $task->setTodo(null);
             }
+
+            // Reindex array elements to avoid problems with data serialization
+            $this->tasks = new ArrayCollection($this->tasks->getValues());
         }
 
         return $this;

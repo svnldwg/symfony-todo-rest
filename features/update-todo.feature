@@ -1,4 +1,4 @@
-@PUT
+@update
 Feature: Test updating a ToDo item via PUT
 
   Scenario: Try to update not existing ToDo
@@ -19,8 +19,8 @@ Feature: Test updating a ToDo item via PUT
     And I send a "POST" request to "/api/todos" with body:
         """
         {
-            "name": "some name",
-            "description": "some description",
+            "name": "Original name",
+            "description": "Original description",
             "tasks": [
                 {"name": "first task"},
                 {"name": "second task"}
@@ -31,11 +31,12 @@ Feature: Test updating a ToDo item via PUT
     Then the response status code should be 201
     And the header "Location" should be equal to "http://localhost/api/todos/1"
 
-  Scenario: Try to update ToDo with missing "name" field
+  Scenario: Try to update ToDo with empty "name" field
     When I add "Content-Type" header equal to "application/json"
     And I send a "PUT" request to "/api/todos/1" with body:
     """
     {
+        "name": "",
         "description": "Updated description"
     }
     """
@@ -50,6 +51,22 @@ Feature: Test updating a ToDo item via PUT
          ]
     }
     """
+
+  Scenario: Successfully update ToDo description
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "PUT" request to "/api/todos/1" with body:
+    """
+    {
+        "description": "Only description will be updated"
+    }
+    """
+
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "id" should be equal to the number 1
+    And the JSON node "name" should be equal to the string "Original name"
+    And the JSON node "description" should be equal to the string "Only description will be updated"
+    And the JSON node "tasks" should have 2 elements
 
   Scenario: Successfully update ToDo
     When I add "Content-Type" header equal to "application/json"
