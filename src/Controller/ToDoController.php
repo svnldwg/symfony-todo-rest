@@ -65,7 +65,8 @@ class ToDoController
         $toDo = $this->toDoSerializer->deserializeRequestIntoNew($request->getContent());
         $this->toDoValidator->validate($toDo);
 
-        $this->toDoRepository->save($toDo);
+        $this->entityManager->persist($toDo);
+        $this->entityManager->flush();
 
         $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
         $resourceUrl = $this->urlGenerator->generate(
@@ -142,7 +143,8 @@ class ToDoController
      */
     public function delete(ToDo $toDo): Response
     {
-        $this->toDoRepository->delete($toDo);
+        $this->entityManager->remove($toDo);
+        $this->entityManager->flush();
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }

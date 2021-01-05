@@ -18,16 +18,4 @@ class ToDoRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ToDo::class);
     }
-
-    public function save(ToDo $todo): void
-    {
-        $this->getEntityManager()->persist($todo);
-        $this->getEntityManager()->flush();
-    }
-
-    public function delete(ToDo $toDo): void
-    {
-        $this->getEntityManager()->remove($toDo);
-        $this->getEntityManager()->flush();
-    }
 }
