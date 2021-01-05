@@ -10,4 +10,4 @@ parameters:
     - %currentWorkingDirectory%/migrations/
     - %currentWorkingDirectory%/src/
   ignoreErrors:
-    - '~Parameter #1 \$data of method App\\Service\\ToDoRequestValidator::validate\(\) expects string, resource\|string given.~'
+    - '~Parameter #1 \$jsonRequest of method App\\Service\\ToDoSerializer::deserializeRequestInto(New|Existing)\(\) expects string, resource\|string given.~'

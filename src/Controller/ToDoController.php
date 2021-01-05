@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Entity\ToDo;
 use App\Repository\ToDoRepository;
-use App\Service\ToDoRequestValidator;
+use App\Service\ToDoSerializer;
+use App\Service\ToDoValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
@@ -13,29 +14,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ToDoController
 {
     private EntityManagerInterface $entityManager;
     private ToDoRepository $toDoRepository;
-    private ToDoRequestValidator $requestValidator;
-    private SerializerInterface $serializer;
+    private ToDoSerializer $toDoSerializer;
+    private ToDoValidator $toDoValidator;
     private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ToDoRepository $toDoRepository,
-        ToDoRequestValidator $requestValidator,
-        SerializerInterface $serializer,
+        ToDoSerializer $toDoSerializer,
+        ToDoValidator $toDoValidator,
         UrlGeneratorInterface $urlGenerator
     ) {
         $this->entityManager = $entityManager;
         $this->toDoRepository = $toDoRepository;
-        $this->requestValidator = $requestValidator;
-        $this->serializer = $serializer;
+        $this->toDoSerializer = $toDoSerializer;
+        $this->toDoValidator = $toDoValidator;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -64,11 +62,12 @@ class ToDoController
      */
     public function create(Request $request): JsonResponse
     {
-        $toDo = $this->requestValidator->deserialize($request->getContent());
+        $toDo = $this->toDoSerializer->deserializeRequestIntoNew($request->getContent());
+        $this->toDoValidator->validate($toDo);
 
         $this->toDoRepository->save($toDo);
 
-        $responseJsonData = $this->serializeToJson($toDo);
+        $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
         $resourceUrl = $this->urlGenerator->generate(
             'show_todo',
             ['id' => $toDo->getId()],
@@ -104,11 +103,7 @@ class ToDoController
     {
         $toDos = $this->toDoRepository->findAll();
 
-        $responseJsonData = $this->serializer->serialize($toDos, JsonEncoder::FORMAT, [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
-                return $object->getId();
-            },
-        ]);
+        $responseJsonData = $this->toDoSerializer->serializeArrayToJson($toDos);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
@@ -128,7 +123,7 @@ class ToDoController
      */
     public function show(ToDo $toDo): JsonResponse
     {
-        $responseJsonData = $this->serializeToJson($toDo);
+        $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
     }
@@ -178,21 +173,13 @@ class ToDoController
      */
     public function update(ToDo $toDo, Request $request): Response
     {
-        $this->requestValidator->deserializeIntoExisting($request->getContent(), $toDo);
+        $this->toDoSerializer->deserializeRequestIntoExisting($request->getContent(), $toDo);
+        $this->toDoValidator->validate($toDo);
 
         $this->entityManager->flush();
 
-        $responseJsonData = $this->serializeToJson($toDo);
+        $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
 
         return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
-    }
-
-    private function serializeToJson(ToDo $toDo): string
-    {
-        return $this->serializer->serialize($toDo, JsonEncoder::FORMAT, [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
-                return $object->getId();
-            },
-        ]);
     }
 }
