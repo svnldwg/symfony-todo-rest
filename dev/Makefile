@@ -91,6 +91,10 @@ symfony-container:
 	$(CLI) php bin/console debug:container
 .PHONY: symfony-container
 
+symfony-routes:
+	$(CLI) php bin/console debug:router
+.PHONY: symfony-routes
+
 make-entity:
 	$(CLI) php bin/console make:entity
 .PHONY: make-entity
@@ -110,7 +114,7 @@ clear-cache:
 test: stop start behat
 
 behat:
-	$(CLI) php vendor/bin/behat -f pretty --colors
+	$(CLI) php vendor/bin/behat -f pretty --colors --stop-on-failure
 .PHONY: behat
 
 update-api-doc:
