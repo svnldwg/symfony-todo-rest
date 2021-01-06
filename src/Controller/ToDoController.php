@@ -12,7 +12,6 @@ use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -75,7 +74,7 @@ class ToDoController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        return $this->json($toDo, Response::HTTP_CREATED, ['Location' => $resourceUrl,]);
+        return $this->json($toDo, JsonResponse::HTTP_CREATED, ['Location' => $resourceUrl,]);
     }
 
     /**
@@ -130,12 +129,12 @@ class ToDoController extends AbstractController
      * @OA\Response(response=404, description="ToDo item not found"),
      * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
-    public function delete(ToDo $toDo): Response
+    public function delete(ToDo $toDo): JsonResponse
     {
         $this->entityManager->remove($toDo);
         $this->entityManager->flush();
 
-        return new Response(null, Response::HTTP_NO_CONTENT);
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
     /**
@@ -161,7 +160,7 @@ class ToDoController extends AbstractController
      * ),
      * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
-    public function update(ToDo $toDo, Request $request): Response
+    public function update(ToDo $toDo, Request $request): JsonResponse
     {
         $this->toDoSerializer->deserializeRequestIntoExisting($request->getContent(), $toDo);
         $this->toDoValidator->validate($toDo);
