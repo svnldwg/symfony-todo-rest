@@ -9,13 +9,14 @@ use App\Service\ToDoValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ToDoController
+class ToDoController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private ToDoRepository $toDoRepository;
@@ -68,21 +69,13 @@ class ToDoController
         $this->entityManager->persist($toDo);
         $this->entityManager->flush();
 
-        $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
         $resourceUrl = $this->urlGenerator->generate(
             'show_todo',
             ['id' => $toDo->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        return new JsonResponse(
-            $responseJsonData,
-            Response::HTTP_CREATED,
-            [
-                'Location' => $resourceUrl,
-            ],
-            true
-        );
+        return $this->json($toDo, Response::HTTP_CREATED, ['Location' => $resourceUrl,]);
     }
 
     /**
@@ -104,9 +97,7 @@ class ToDoController
     {
         $toDos = $this->toDoRepository->findAll();
 
-        $responseJsonData = $this->toDoSerializer->serializeArrayToJson($toDos);
-
-        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
+        return $this->json($toDos);
     }
 
     /**
@@ -124,9 +115,7 @@ class ToDoController
      */
     public function show(ToDo $toDo): JsonResponse
     {
-        $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
-
-        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
+        return $this->json($toDo);
     }
 
     /**
@@ -179,8 +168,6 @@ class ToDoController
 
         $this->entityManager->flush();
 
-        $responseJsonData = $this->toDoSerializer->serializeToJson($toDo);
-
-        return new JsonResponse($responseJsonData, Response::HTTP_OK, [], true);
+        return $this->json($toDo);
     }
 }

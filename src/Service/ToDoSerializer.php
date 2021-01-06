@@ -30,24 +30,6 @@ class ToDoSerializer
         return $this->deserializeRequest($jsonRequest);
     }
 
-    public function serializeToJson(ToDo $toDo): string
-    {
-        return $this->serializer->serialize($toDo, JsonEncoder::FORMAT, [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
-                return $object->getId();
-            },
-        ]);
-    }
-
-    public function serializeArrayToJson(array $toDos): string
-    {
-        return $this->serializer->serialize($toDos, JsonEncoder::FORMAT, [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (ToDo $object) {
-                return $object->getId();
-            },
-        ]);
-    }
-
     /**
      * @param mixed[] $serializationContext
      *
