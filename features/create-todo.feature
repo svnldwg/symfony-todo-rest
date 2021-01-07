@@ -88,6 +88,27 @@ Feature: Test creating a ToDo item and also possible exceptions
         }
         """
 
+    Scenario: Try to create a ToDo with id field
+        When I add "Content-Type" header equal to "application/json"
+        And I send a "POST" request to "/api/todos" with body:
+        """
+        {
+            "name": "ToDo",
+            "id": 10
+        }
+        """
+
+        Then the response status code should be 400
+        And the response should be in JSON
+        And the JSON should be equal to:
+        """
+        {
+            "errors": [
+                "Extra attributes are not allowed (\"id\" are unknown)."
+            ]
+        }
+        """
+
     Scenario: Try to create a ToDo with multiple validation errors
         When I add "Content-Type" header equal to "application/json"
         And I send a "POST" request to "/api/todos" with body:
