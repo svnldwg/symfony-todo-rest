@@ -2,6 +2,13 @@
 
 A simple RESTful API for ToDo items based on Symfony 5.
 
+Features:
+* Request validation
+* Serialization of entities to json and deserialization from json to entities using symfony/serializer
+* Generated Swagger Documentation based on Code and Annotations (nelmio/api-doc-bundle)
+* Centralized Exception Handler always returns JSON responses when an exception occurs
+* Usage of Doctrine Param Converter
+
 Infrastructure:
 * PHP 7.4
 * PostgreSQL 13
@@ -14,6 +21,7 @@ Dev Tools:
 * php-cs-fixer
 * Xdebug 3
 * Composer 2
+* Behat
 
 ## Setup
 
