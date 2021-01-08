@@ -13,7 +13,6 @@ services:
   php:
     build:
       context: .
-    #env_file: ../.env.test
     volumes:
       - ../:/var/www/html/
     depends_on:
