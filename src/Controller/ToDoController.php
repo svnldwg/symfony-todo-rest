@@ -74,7 +74,7 @@ class ToDoController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        return $this->json($toDo, JsonResponse::HTTP_CREATED, ['Location' => $resourceUrl,]);
+        return $this->json($toDo, JsonResponse::HTTP_CREATED, ['Location' => $resourceUrl, ]);
     }
 
     /**
