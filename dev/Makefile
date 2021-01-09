@@ -74,14 +74,10 @@ php-cs-fixer: ##@development run php-cs-fixer
 	$(CLI) ./vendor/bin/php-cs-fixer fix --config=dev/csfixer.php_cs
 .PHONY: php-cs-fixer
 
-phpunit: ##@development run phpunit
-	$(CLI) ./vendor/bin/phpunit
-.PHONY: phpunit
-
-codecheck: php-cs-fixer phpstan phpunit
+codecheck: php-cs-fixer phpstan
 .PHONY: codecheck
 
-pre-commit: php-cs-fixer update-api-doc behat phpstan
+pre-commit: codecheck update-api-doc behat
 
 symfony-autowiring:
 	$(CLI) php bin/console debug:autowiring
