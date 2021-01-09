@@ -1,22 +1,4 @@
 {
-    "adamquaile/behat-command-runner-extension": {
-        "version": "v0.1.1"
-    },
-    "behat/behat": {
-        "version": "v3.8.1"
-    },
-    "behat/gherkin": {
-        "version": "v4.6.2"
-    },
-    "behat/mink": {
-        "version": "v1.8.1"
-    },
-    "behat/transliterator": {
-        "version": "v1.3.0"
-    },
-    "behatch/contexts": {
-        "version": "3.3.0"
-    },
     "composer/semver": {
         "version": "3.2.4"
     },
@@ -43,6 +25,9 @@
     },
     "doctrine/common": {
         "version": "3.1.0"
+    },
+    "doctrine/data-fixtures": {
+        "version": "1.4.4"
     },
     "doctrine/dbal": {
         "version": "2.12.1"
@@ -99,27 +84,6 @@
     "doctrine/sql-formatter": {
         "version": "1.1.1"
     },
-    "friends-of-behat/mink-browserkit-driver": {
-        "version": "v1.4.0"
-    },
-    "friends-of-behat/mink-extension": {
-        "version": "v2.4.0"
-    },
-    "friends-of-behat/symfony-extension": {
-        "version": "2.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "2.0",
-            "ref": "3d21344765fd3440a85bdd27d4cada186ec628bd"
-        },
-        "files": [
-            "behat.yml.dist",
-            "config/services_test.yaml",
-            "features/demo.feature",
-            "tests/Behat/DemoContext.php"
-        ]
-    },
     "friendsofphp/php-cs-fixer": {
         "version": "2.2",
         "recipe": {
@@ -134,9 +98,6 @@
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.1"
-    },
-    "justinrainbow/json-schema": {
-        "version": "5.2.10"
     },
     "laminas/laminas-code": {
         "version": "3.5.1"
@@ -232,9 +193,6 @@
             "bin/console"
         ]
     },
-    "symfony/css-selector": {
-        "version": "v5.2.1"
-    },
     "symfony/dependency-injection": {
         "version": "v5.2.1"
     },
@@ -318,6 +276,21 @@
     "symfony/options-resolver": {
         "version": "v5.2.1"
     },
+    "symfony/phpunit-bridge": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "6d0e35f749d5f4bfe1f011762875275cd3f9874f"
+        },
+        "files": [
+            ".env.test",
+            "bin/phpunit",
+            "phpunit.xml.dist",
+            "tests/bootstrap.php"
+        ]
+    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.20.0"
     },
@@ -345,9 +318,6 @@
     "symfony/property-info": {
         "version": "v5.2.1"
     },
-    "symfony/proxy-manager-bridge": {
-        "version": "v5.2.1"
-    },
     "symfony/routing": {
         "version": "5.1",
         "recipe": {
@@ -373,19 +343,6 @@
     },
     "symfony/string": {
         "version": "v5.2.1"
-    },
-    "symfony/translation": {
-        "version": "3.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "3.3",
-            "ref": "2ad9d2545bce8ca1a863e50e92141f0b9d87ffcd"
-        },
-        "files": [
-            "config/packages/translation.yaml",
-            "translations/.gitignore"
-        ]
     },
     "symfony/translation-contracts": {
         "version": "v2.3.0"

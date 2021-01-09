@@ -134,31 +134,3 @@ Feature: Test creating a ToDo item and also possible exceptions
             ]
         }
         """
-
-    Scenario: Successfully create a new ToDo
-        When I add "Content-Type" header equal to "application/json"
-        And I send a "POST" request to "/api/todos" with body:
-        """
-        {
-            "name": "some name",
-            "description": "some description",
-            "tasks": [
-                {"name": "some task"}
-            ]
-        }
-        """
-
-        Then the response status code should be 201
-        And the header "Location" should be equal to "http://localhost/api/todos/1"
-        And the response should be in JSON
-
-        And the JSON node "id" should be equal to the number 1
-        And the JSON node "name" should be equal to the string "some name"
-        And the JSON node "description" should be equal to the string "some description"
-        And the JSON node "tasks" should have 1 element
-        And the JSON node "tasks[0].id" should not exist
-        And the JSON node "tasks[0].todo" should not exist
-        And the JSON node "tasks[0].name" should be equal to the string "some task"
-        And the JSON node "tasks[0].description" should be null
-        And the JSON node "createdAt" should be a datetime
-        And the JSON node "updatedAt" should be a datetime

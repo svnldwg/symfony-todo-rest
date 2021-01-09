@@ -77,7 +77,7 @@ php-cs-fixer: ##@development run php-cs-fixer
 codecheck: php-cs-fixer phpstan
 .PHONY: codecheck
 
-pre-commit: codecheck update-api-doc behat
+pre-commit: codecheck update-api-doc test
 
 symfony-autowiring:
 	$(CLI) php bin/console debug:autowiring
@@ -107,11 +107,11 @@ clear-cache:
 	$(CLI) php bin/console cache:clear
 	$(CLI) php bin/console --env=test cache:clear
 
-test: stop start behat
-
-behat:
-	$(CLI) php vendor/bin/behat -f pretty --colors --stop-on-failure
-.PHONY: behat
+test: start phpunit
 
 update-api-doc:
 	$(CLI) php bin/console nelmio:apidoc:dump > apidoc.json
+.PHONY: update-api-doc
+
+phpunit:
+	$(CLI) php bin/phpunit
