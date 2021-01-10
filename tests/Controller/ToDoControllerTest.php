@@ -4,16 +4,11 @@ namespace App\Tests\Controller;
 
 use App\Tests\Fixtures\ToDoLoader;
 use App\Tests\WebTestCaseWithDatabase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ToDoControllerTest extends WebTestCaseWithDatabase
 {
-    public function testNotFoundRoute(): void
-    {
-        $this->client->request('GET', '/api/todos/not-found-route');
-
-        self::assertEquals(404, $this->client->getResponse()->getStatusCode());
-    }
-
     public function testCreateToDo(): void
     {
         $this->postJson('/api/todos', <<<'JSON'
@@ -27,7 +22,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
             JSON);
 
         $response = $this->client->getResponse();
-        self::assertSame(201, $response->getStatusCode());
+        self::assertSame(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertSame('http://localhost/api/todos/1', $response->headers->get('Location'));
         self::assertJson($response->getContent());
 
@@ -52,7 +47,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
         $response = $this->client->getResponse();
 
-        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertSame('application/json', $response->headers->get('Content-Type'));
         self::assertJson($response->getContent());
 
@@ -66,7 +61,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $this->client->request('DELETE', '/api/todos/1');
 
         $response = $this->client->getResponse();
-        self::assertSame(204, $response->getStatusCode());
+        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
         self::assertEmpty($response->getContent());
     }
 
@@ -75,7 +70,33 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $this->client->request('DELETE', '/api/todos/1');
 
         $response = $this->client->getResponse();
-        self::assertSame(404, $response->getStatusCode());
+        self::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
         self::assertEmpty($response->getContent());
+    }
+
+    public function testNotFoundRoute(): void
+    {
+        $this->client->request('GET', '/api/todos/not-found-route');
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @dataProvider invalidMethodDataProvider
+     */
+    public function testMethodNotAllowed(string $method, string $uri): void
+    {
+        $this->client->request($method, $uri);
+
+        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function invalidMethodDataProvider(): array
+    {
+        return [
+            [Request::METHOD_DELETE, '/api/todos'],
+            [Request::METHOD_PUT, '/api/todos'],
+            [Request::METHOD_POST, '/api/todos/1'],
+        ];
     }
 }
