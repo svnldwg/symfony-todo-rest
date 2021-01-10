@@ -22,9 +22,9 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
             JSON);
 
         $response = $this->client->getResponse();
-        self::assertSame(Response::HTTP_CREATED, $response->getStatusCode());
-        self::assertSame('http://localhost/api/todos/1', $response->headers->get('Location'));
-        self::assertJson($response->getContent());
+        static::assertSame(Response::HTTP_CREATED, $response->getStatusCode());
+        static::assertSame('http://localhost/api/todos/1', $response->headers->get('Location'));
+        static::assertJson($response->getContent());
 
         $timestamps = $this->assertTimestamps(json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR));
 
@@ -47,7 +47,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
             $timestamps['updatedAt'],
             $timestamps['createdAt']
         );
-        self::assertJsonStringEqualsJsonString($expectedJson, $response->getContent());
+        static::assertJsonStringEqualsJsonString($expectedJson, $response->getContent());
     }
 
     public function testGetSingleToDo(): void
@@ -57,7 +57,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $this->client->request('GET', '/api/todos/2');
 
         $response = $this->client->getResponse();
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        static::assertSame(Response::HTTP_OK, $response->getStatusCode());
 
         $responseArray = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $timestamps = $this->assertTimestamps($responseArray);
@@ -94,8 +94,8 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $this->client->request('GET', '/api/todos/1');
 
         $response = $this->client->getResponse();
-        self::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
-        self::assertEmpty($response->getContent());
+        static::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        static::assertEmpty($response->getContent());
     }
 
     public function testGetAllToDos(): void
@@ -106,9 +106,9 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
         $response = $this->client->getResponse();
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame('application/json', $response->headers->get('Content-Type'));
-        self::assertJson($response->getContent());
+        static::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        static::assertSame('application/json', $response->headers->get('Content-Type'));
+        static::assertJson($response->getContent());
 
         $responseArray = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         static::assertIsArray($responseArray);
@@ -161,11 +161,11 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
         $response = $this->client->getResponse();
 
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame('application/json', $response->headers->get('Content-Type'));
-        self::assertJson($response->getContent());
+        static::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        static::assertSame('application/json', $response->headers->get('Content-Type'));
+        static::assertJson($response->getContent());
 
-        self::assertJsonStringEqualsJsonString('[]', $response->getContent());
+        static::assertJsonStringEqualsJsonString('[]', $response->getContent());
     }
 
     public function testDelete(): void
@@ -175,8 +175,8 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $this->client->request('DELETE', '/api/todos/1');
 
         $response = $this->client->getResponse();
-        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-        self::assertEmpty($response->getContent());
+        static::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        static::assertEmpty($response->getContent());
     }
 
     public function testTryToDeleteNonExistingToDo(): void
@@ -184,15 +184,139 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $this->client->request('DELETE', '/api/todos/1');
 
         $response = $this->client->getResponse();
-        self::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
-        self::assertEmpty($response->getContent());
+        static::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        static::assertEmpty($response->getContent());
+    }
+
+    /**
+     * @dataProvider updateToDoDataProvider
+     */
+    public function testUpdateToDo(string $requestBody, string $expectedResponse): void
+    {
+        $this->addFixture(ToDoLoader::class);
+
+        $this->putJson('/api/todos/2', $requestBody);
+
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        static::assertJson($response->getContent());
+
+        $timestamps = $this->assertTimestamps(json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR));
+        $expectedJson = sprintf(
+            $expectedResponse,
+            $timestamps['updatedAt'],
+            $timestamps['createdAt'],
+        );
+        static::assertJsonStringEqualsJsonString($expectedJson, $response->getContent());
+    }
+
+    public function updateToDoDataProvider(): array
+    {
+        return [
+            [
+                <<<'JSON'
+                          {"description": "new description"}
+                    JSON,
+                <<<'JSON'
+                          {
+                              "id": 2,
+                              "name": "ToDo 2",
+                              "description": "new description",
+                              "tasks": [
+                                  {
+                                      "name": "Task 1 for ToDo 2",
+                                      "description": "Task description"
+                                  },
+                                  {
+                                      "name": "Task 2 for ToDo 2",
+                                      "description": null
+                                  }
+                              ],
+                              "updatedAt": "%s",
+                              "createdAt": "%s"
+                          }
+                    JSON
+            ],
+            [
+                <<<'JSON'
+                          {
+                            "name": "Updated name",
+                            "description": "Updated description",
+                            "tasks": [
+                                {"name": "Updated first task"},
+                                {"name": "Updated second task", "description": "I have a description now"},
+                                {"name": "Newly added third task"}
+                            ]
+                          }
+                    JSON,
+                <<<'JSON'
+                          {
+                              "id": 2,
+                              "name": "Updated name",
+                              "description": "Updated description",
+                              "tasks": [
+                                  {
+                                      "name": "Updated first task",
+                                      "description": null
+                                  },
+                                  {
+                                      "name": "Updated second task",
+                                      "description": "I have a description now"
+                                  },
+                                  {
+                                      "name": "Newly added third task",
+                                      "description": null
+                                  }
+                              ],
+                              "updatedAt": "%s",
+                              "createdAt": "%s"
+                          }
+                    JSON
+            ],
+        ];
+    }
+
+    public function testTryToUpdateWithInvalidBody(): void
+    {
+        $this->addFixture(ToDoLoader::class);
+
+        $this->putJson('/api/todos/1', <<<'JSON'
+                {
+                    "name": ""
+                }
+            JSON);
+
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        static::assertJson($response->getContent());
+        $expectedJson = <<<'JSON'
+                    {
+                        "errors": [
+                          "name: This value should not be blank."
+                        ]
+                    }
+            JSON;
+        static::assertJsonStringEqualsJsonString($expectedJson, $response->getContent());
+    }
+
+    public function testTryToUpdateNonExistingToDo(): void
+    {
+        $this->putJson('/api/todos/1', <<<'JSON'
+                {
+                    "name": "some name"
+                }
+            JSON);
+
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        static::assertEmpty($response->getContent());
     }
 
     public function testNotFoundRoute(): void
     {
         $this->client->request('GET', '/api/todos/not-found-route');
 
-        self::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        static::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -202,7 +326,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
     {
         $this->client->request($method, $uri);
 
-        self::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
+        static::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
     public function invalidMethodDataProvider(): array
@@ -216,8 +340,8 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
     private function assertTimestamps(array $toDo): array
     {
-        self::assertAtomDateTime($toDo['updatedAt']);
-        self::assertAtomDateTime($toDo['createdAt']);
+        static::assertAtomDateTime($toDo['updatedAt']);
+        static::assertAtomDateTime($toDo['createdAt']);
 
         return [
             'updatedAt' => $toDo['updatedAt'],

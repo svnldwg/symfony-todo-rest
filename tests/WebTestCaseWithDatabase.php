@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class WebTestCaseWithDatabase extends WebTestCase
 {
@@ -60,7 +61,12 @@ class WebTestCaseWithDatabase extends WebTestCase
 
     protected function postJson(string $uri, string $json)
     {
-        return $this->client->request('POST', $uri, [], [], [], $json);
+        return $this->client->request(Request::METHOD_POST, $uri, [], [], [], $json);
+    }
+
+    protected function putJson(string $uri, string $json)
+    {
+        return $this->client->request(Request::METHOD_PUT, $uri, [], [], [], $json);
     }
 
     protected static function assertAtomDateTime(string $dateString): void
