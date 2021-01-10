@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Tests\Fixtures\ToDoLoader;
 use App\Tests\WebTestCaseWithDatabase;
 
 class ToDoControllerTest extends WebTestCaseWithDatabase
@@ -58,10 +59,23 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         self::assertJsonStringEqualsJsonString('[]', $response->getContent());
     }
 
-    public function testGetToDo(): void
+    public function testDelete(): void
     {
-        $this->client->request('GET', '/api/todos');
+        $this->addFixture(ToDoLoader::class);
 
-        self::assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->client->request('DELETE', '/api/todos/1');
+
+        $response = $this->client->getResponse();
+        self::assertSame(204, $response->getStatusCode());
+        self::assertEmpty($response->getContent());
+    }
+
+    public function testTryToDeleteNonExistingToDo(): void
+    {
+        $this->client->request('DELETE', '/api/todos/1');
+
+        $response = $this->client->getResponse();
+        self::assertSame(404, $response->getStatusCode());
+        self::assertEmpty($response->getContent());
     }
 }

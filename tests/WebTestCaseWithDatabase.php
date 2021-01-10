@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -43,8 +45,17 @@ class WebTestCaseWithDatabase extends WebTestCase
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
         $purger->purge();
 
-        // reset auto increments (not handled by purger)
+        // reset SQLite auto increments (not handled by purger)
         $this->em->getConnection()->executeStatement('DELETE FROM sqlite_sequence');
+    }
+
+    protected function addFixture(string $className): void
+    {
+        $loader = new Loader();
+        $loader->addFixture(new $className());
+
+        $executor = new ORMExecutor($this->em);
+        $executor->execute($loader->getFixtures(), true);
     }
 
     protected function postJson(string $uri, string $json)
