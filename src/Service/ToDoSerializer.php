@@ -51,7 +51,7 @@ class ToDoSerializer
             );
         } catch (ExtraAttributesException $exception) {
             throw new BadRequestHttpException($exception->getMessage());
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             throw new BadRequestHttpException('Invalid body.');
         }
 
