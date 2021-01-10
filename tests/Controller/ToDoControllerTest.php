@@ -16,7 +16,8 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
                     "name": "some name",
                     "description": "some description",
                     "tasks": [
-                        {"name": "some task"}
+                        {"name": "some task"},
+                        {"name": "another task", "description": "with description"}
                     ]
                 }
             JSON);
@@ -38,6 +39,10 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
                             {
                                 "name": "some task",
                                 "description": null
+                            },
+                            {
+                                "name": "another task",
+                                "description": "with description"
                             }
                         ],
                         "updatedAt": "%s",
@@ -48,6 +53,104 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
             $timestamps['createdAt']
         );
         static::assertJsonStringEqualsJsonString($expectedJson, $response->getContent());
+    }
+
+    /**
+     * @dataProvider createToDoInvalidBodyDataProvider
+     */
+    public function testCreateToDoBadRequest(string $requestBody, string $expectedJson): void
+    {
+        $this->postJson('/api/todos', $requestBody);
+
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        static::assertJson($response->getContent());
+
+        static::assertJsonStringEqualsJsonString($expectedJson, $response->getContent());
+    }
+
+    public function createToDoInvalidBodyDataProvider(): array
+    {
+        return [
+            [
+                <<<'JSON'
+                    {
+                        "description": "my first ToDo but I forgot the name"
+                    }
+                    JSON,
+                <<<'JSON'
+                    {
+                         "errors": [
+                              "name: This value should not be blank."
+                         ]
+                    }
+                    JSON
+            ],
+            [
+                <<<'JSON'
+                    {
+                        "name": ""
+                    }
+                    JSON,
+                <<<'JSON'
+                    {
+                         "errors": [
+                              "name: This value should not be blank."
+                         ]
+                    }
+                    JSON
+            ],
+            [
+                <<<'JSON'
+                    {
+                        "name": "       ",
+                        "tasks": [
+                            {
+                                "name": "    "
+                            }
+                        ]
+                    }
+                    JSON,
+                <<<'JSON'
+                    {
+                         "errors": [
+                              "name: This value should not be blank.",
+                              "tasks[0].name: This value should not be blank."
+                         ]
+                    }
+                    JSON
+            ],
+            [
+                <<<'JSON'
+                    {
+                        "name": "ToDo",
+                        "unknown": "unknown"
+                    }
+                    JSON,
+                <<<'JSON'
+                    {
+                         "errors": [
+                            "Extra attributes are not allowed (\"unknown\" are unknown)."
+                         ]
+                    }
+                    JSON
+            ],
+            [
+                <<<'JSON'
+                    {
+                        "name": "ToDo",
+                        "id": 1
+                    }
+                    JSON,
+                <<<'JSON'
+                    {
+                         "errors": [
+                            "Extra attributes are not allowed (\"id\" are unknown)."
+                         ]
+                    }
+                    JSON
+            ],
+        ];
     }
 
     public function testGetSingleToDo(): void
