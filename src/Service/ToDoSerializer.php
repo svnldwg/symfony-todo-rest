@@ -12,12 +12,10 @@ use Symfony\Component\Serializer\SerializerInterface;
 class ToDoSerializer
 {
     private const REQUEST_SERIALIZATION_GROUP = 'request';
-    private SerializerInterface $serializer;
 
     public function __construct(
-        SerializerInterface $serializer
+        private SerializerInterface $serializer
     ) {
-        $this->serializer = $serializer;
     }
 
     public function deserializeRequestIntoExisting(string $jsonRequest, ToDo $toDo): ToDo

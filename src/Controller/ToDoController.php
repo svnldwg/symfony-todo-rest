@@ -17,24 +17,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ToDoController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-    private ToDoRepository $toDoRepository;
-    private ToDoSerializer $toDoSerializer;
-    private ToDoValidator $toDoValidator;
-    private UrlGeneratorInterface $urlGenerator;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ToDoRepository $toDoRepository,
-        ToDoSerializer $toDoSerializer,
-        ToDoValidator $toDoValidator,
-        UrlGeneratorInterface $urlGenerator
+        private EntityManagerInterface $entityManager,
+        private ToDoRepository $toDoRepository,
+        private ToDoSerializer $toDoSerializer,
+        private ToDoValidator $toDoValidator,
+        private UrlGeneratorInterface $urlGenerator
     ) {
-        $this->entityManager = $entityManager;
-        $this->toDoRepository = $toDoRepository;
-        $this->toDoSerializer = $toDoSerializer;
-        $this->toDoValidator = $toDoValidator;
-        $this->urlGenerator = $urlGenerator;
     }
 
     /**

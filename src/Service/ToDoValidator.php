@@ -9,12 +9,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ToDoValidator
 {
-    private ValidatorInterface $validator;
-
     public function __construct(
-        ValidatorInterface $validator
+        private ValidatorInterface $validator
     ) {
-        $this->validator = $validator;
     }
 
     public function validate(ToDo $toDo): void
