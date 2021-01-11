@@ -24,3 +24,7 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+!/var/
+/var/*
+!/var/data/.gitignore
