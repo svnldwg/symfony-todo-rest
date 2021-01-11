@@ -28,7 +28,7 @@
     "require-dev": {
         "doctrine/data-fixtures": "^1.4",
         "friendsofphp/php-cs-fixer": "^v2.17.1",
-        "phpstan/phpstan": "0.12.62",
+        "phpstan/phpstan": "0.12.66",
         "phpstan/phpstan-phpunit": "0.12.17",
         "symfony/browser-kit": "5.2.*",
         "symfony/maker-bundle": "^1.25",
