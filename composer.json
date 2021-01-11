@@ -73,7 +73,7 @@
         ],
         "cs-check": "php-cs-fixer fix --config=dev/csfixer.php_cs --dry-run --diff",
         "analyse": "phpstan analyse -c dev/phpstan.neon --no-progress",
-        "phpunit": "bin/phpunit"
+        "phpunit": "php bin/phpunit"
     },
     "conflict": {
         "symfony/symfony": "*"
