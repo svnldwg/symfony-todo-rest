@@ -38,4 +38,4 @@ jobs:
           PHP_CS_FIXER_IGNORE_ENV: "true" # necessary until full PHP 8 support in php-cs-fixer
 
       - name: Tests
-        run: composer phpunit
+        run: php bin/phpunit
