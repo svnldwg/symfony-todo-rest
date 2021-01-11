@@ -31,12 +31,12 @@ jobs:
         run: composer validate
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
+
+      - name: Tests
+        uses: php bin/phpunit
 
       - name: Code check
         run: composer check
         env:
           PHP_CS_FIXER_IGNORE_ENV: "true" # necessary until full PHP 8 support in php-cs-fixer
-
-      - name: Tests
-        uses: chindit/actions-phpunit-symfony@master
