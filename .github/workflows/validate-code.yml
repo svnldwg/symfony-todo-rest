@@ -15,7 +15,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php: ['8.0']
-        phpuniturl: ["https://raw.githubusercontent.com/symfony/recipes/master/symfony/phpunit-bridge/4.3/bin/phpunit"]
 
     name: PHP ${{ matrix.php }} Test on ${{ matrix.os }}
     steps:
@@ -28,10 +27,6 @@ jobs:
           php-version: ${{ matrix.php }}
           tools: composer
 
-      - name: Determine composer cache directory on Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
-
       - name: Validate composer.json and composer.lock
         run: composer validate
 
@@ -43,21 +38,5 @@ jobs:
         env:
           PHP_CS_FIXER_IGNORE_ENV: "true" # necessary until full PHP 8 support in php-cs-fixer
 
-      - name: Check phpunit file existence
-        if: success()
-        id: check-files
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "bin/phpunit"
-
-      - name: Get PHPUnit-Bridge Recipe
-        if: success() && steps.check-files.outputs.files_exists == 'false'
-        run: |
-          mkdir -p bin
-          cd bin
-          rm -f phpunit
-          wget ${{ matrix.phpuniturl }}
-          cd ../
-
       - name: Tests
-        run: php bin/phpunit
+        uses: chindit/actions-phpunit-symfony@master
