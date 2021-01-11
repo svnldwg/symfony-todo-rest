@@ -43,4 +43,3 @@ See API Documentation: http://symfony-todo-rest.dev.local:8100/api/doc
 - GET all: sorting
 - GET all: filter
 - Authentication (JWT)
-- Build Pipeline
