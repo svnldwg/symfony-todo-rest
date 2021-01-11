@@ -30,11 +30,17 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Tests
-        run: pwd
+        run: ls
 
       - name: Code check
         run: composer check
