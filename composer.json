@@ -1,4 +1,6 @@
 {
+    "name": "svnldwg/symfony-todo-rest",
+    "description": "Basic implementation of a RESTful API to manage ToDo items based on Symfony",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
