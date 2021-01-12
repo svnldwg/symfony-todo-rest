@@ -21,7 +21,8 @@ Dev Tools:
 * php-cs-fixer
 * Xdebug 3
 * Composer 2
-* Behat
+* PHPUnit
+* GitHub Workflow
 
 ## Setup
 
