@@ -16,6 +16,8 @@ class WebTestCaseWithDatabase extends WebTestCase
     protected KernelBrowser $client;
     protected EntityManager $em;
 
+    private ?string $jwt = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,6 +38,8 @@ class WebTestCaseWithDatabase extends WebTestCase
         $metaData = $this->em->getMetadataFactory()->getAllMetadata();
         $schemaTool = new SchemaTool($this->em);
         $schemaTool->updateSchema($metaData);
+
+        $this->login();
     }
 
     protected function tearDown(): void
@@ -59,14 +63,28 @@ class WebTestCaseWithDatabase extends WebTestCase
         $executor->execute($loader->getFixtures(), true);
     }
 
-    protected function postJson(string $uri, string $json)
+    protected function request(string $method, string $uri, ?string $json = null)
     {
-        return $this->client->request(Request::METHOD_POST, $uri, [], [], [], $json);
+        return $this->client->request($method, $uri, [], [], $this->getHeaders(), $json);
     }
 
-    protected function putJson(string $uri, string $json)
+    protected function login(): void
     {
-        return $this->client->request(Request::METHOD_PUT, $uri, [], [], [], $json);
+        if ($this->jwt !== null) {
+            return;
+        }
+
+        $this->client->request(Request::METHOD_POST, '/api/login', [], [], [], null);
+
+        $response = $this->client->getResponse();
+        $responseArray = json_decode($response->getContent(), true);
+
+        $this->jwt = $responseArray['jwt'];
+    }
+
+    protected function logout(): void
+    {
+        $this->jwt = null;
     }
 
     protected static function assertAtomDateTime(string $dateString): void
@@ -75,5 +93,15 @@ class WebTestCaseWithDatabase extends WebTestCase
         $formattedDateTime = $dateTime->format(\DateTimeInterface::ATOM);
 
         static::assertSame($dateString, $formattedDateTime);
+    }
+
+    private function getHeaders(): array
+    {
+        $headers = [];
+        if ($this->jwt !== null) {
+            $headers['HTTP_AUTHORIZATION'] = 'Bearer ' . $this->jwt;
+        }
+
+        return $headers;
     }
 }

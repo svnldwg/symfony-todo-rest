@@ -11,7 +11,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 {
     public function testCreateToDo(): void
     {
-        $this->postJson('/api/todos', <<<'JSON'
+        $this->request('POST', '/api/todos', <<<'JSON'
                 {
                     "name": "some name",
                     "description": "some description",
@@ -60,7 +60,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
      */
     public function testCreateToDoBadRequest(string $requestBody, string $expectedJson): void
     {
-        $this->postJson('/api/todos', $requestBody);
+        $this->request('POST', '/api/todos', $requestBody);
 
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
@@ -157,7 +157,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
     {
         $this->addFixture(ToDoLoader::class);
 
-        $this->client->request('GET', '/api/todos/2');
+        $this->request('GET', '/api/todos/2');
 
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_OK, $response->getStatusCode());
@@ -194,7 +194,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
     public function testGetNonExistingToDo(): void
     {
-        $this->client->request('GET', '/api/todos/1');
+        $this->request('GET', '/api/todos/1');
 
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
@@ -205,7 +205,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
     {
         $this->addFixture(ToDoLoader::class);
 
-        $this->client->request('GET', '/api/todos');
+        $this->request('GET', '/api/todos');
 
         $response = $this->client->getResponse();
 
@@ -260,7 +260,8 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
     public function testEmptyListOfTodos(): void
     {
-        $this->client->request('GET', '/api/todos');
+        $this->logout();
+        $this->request('GET', '/api/todos');
 
         $response = $this->client->getResponse();
 
@@ -275,7 +276,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
     {
         $this->addFixture(ToDoLoader::class);
 
-        $this->client->request('DELETE', '/api/todos/1');
+        $this->request('DELETE', '/api/todos/1');
 
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
@@ -284,7 +285,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
     public function testTryToDeleteNonExistingToDo(): void
     {
-        $this->client->request('DELETE', '/api/todos/1');
+        $this->request('DELETE', '/api/todos/1');
 
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
@@ -298,7 +299,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
     {
         $this->addFixture(ToDoLoader::class);
 
-        $this->putJson('/api/todos/2', $requestBody);
+        $this->request('PUT', '/api/todos/2', $requestBody);
 
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_OK, $response->getStatusCode());
@@ -383,7 +384,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
     {
         $this->addFixture(ToDoLoader::class);
 
-        $this->putJson('/api/todos/1', <<<'JSON'
+        $this->request('PUT', '/api/todos/1', <<<'JSON'
                 {
                     "name": ""
                 }
@@ -404,7 +405,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
     public function testTryToUpdateNonExistingToDo(): void
     {
-        $this->putJson('/api/todos/1', <<<'JSON'
+        $this->request('PUT', '/api/todos/1', <<<'JSON'
                 {
                     "name": "some name"
                 }
@@ -417,7 +418,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
 
     public function testNotFoundRoute(): void
     {
-        $this->client->request('GET', '/api/todos/not-found-route');
+        $this->request('GET', '/api/todos/not-found-route');
 
         static::assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
     }
@@ -427,7 +428,7 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
      */
     public function testMethodNotAllowed(string $method, string $uri): void
     {
-        $this->client->request($method, $uri);
+        $this->request($method, $uri);
 
         static::assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }

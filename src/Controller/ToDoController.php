@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ToDo;
 use App\Repository\ToDoRepository;
+use App\Service\Authenticator;
 use App\Service\ToDoSerializer;
 use App\Service\ToDoValidator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,7 +23,8 @@ class ToDoController extends AbstractController
         private ToDoRepository $toDoRepository,
         private ToDoSerializer $toDoSerializer,
         private ToDoValidator $toDoValidator,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private Authenticator $authenticator,
     ) {
     }
 
@@ -51,6 +53,8 @@ class ToDoController extends AbstractController
      */
     public function create(Request $request): JsonResponse
     {
+        $this->authenticator->authenticate($request);
+
         $toDo = $this->toDoSerializer->deserializeRequestIntoNew($request->getContent());
         $this->toDoValidator->validate($toDo);
 
@@ -118,8 +122,10 @@ class ToDoController extends AbstractController
      * @OA\Response(response=404, description="ToDo item not found"),
      * @OA\Response(response="default", description="Unexpected error", @OA\JsonContent(ref="#/components/schemas/ErrorModel"))
      */
-    public function delete(ToDo $toDo): JsonResponse
+    public function delete(ToDo $toDo, Request $request): JsonResponse
     {
+        $this->authenticator->authenticate($request);
+
         $this->entityManager->remove($toDo);
         $this->entityManager->flush();
 
@@ -151,6 +157,8 @@ class ToDoController extends AbstractController
      */
     public function update(ToDo $toDo, Request $request): JsonResponse
     {
+        $this->authenticator->authenticate($request);
+
         $this->toDoSerializer->deserializeRequestIntoExisting($request->getContent(), $toDo);
         $this->toDoValidator->validate($toDo);
 
