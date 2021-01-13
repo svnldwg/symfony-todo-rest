@@ -153,6 +153,16 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         ];
     }
 
+    public function testCreateToDoAccessDenied(): void
+    {
+        $this->logout();
+
+        $this->request('POST', '/api/todos', '{}');
+
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
     public function testGetSingleToDo(): void
     {
         $this->addFixture(ToDoLoader::class);
@@ -281,6 +291,17 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
         static::assertEmpty($response->getContent());
+    }
+
+    public function testDeleteAccessDenied(): void
+    {
+        $this->addFixture(ToDoLoader::class);
+        $this->logout();
+
+        $this->request('DELETE', '/api/todos/1');
+
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
 
     public function testTryToDeleteNonExistingToDo(): void
