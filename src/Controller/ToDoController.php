@@ -54,6 +54,7 @@ class ToDoController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $this->authenticator->authenticate($request);
+        // TODO save user who created the ToDo
 
         $toDo = $this->toDoSerializer->deserializeRequestIntoNew($request->getContent());
         $this->toDoValidator->validate($toDo);

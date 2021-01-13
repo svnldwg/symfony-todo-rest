@@ -8,15 +8,17 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class Authenticator
 {
-    public const SECRET_KEY = 'sdf8udsf8sudf98sdf8';
+    private const SECRET_KEY = 'sdf8udsf8sudf98sdf8'; // TODO secure key? env var?
+    private const TOKEN_EXPIRES_AFTER_SECONDS = 300;
 
     public function login(): string
     {
-        $issuer_claim = 'THE_ISSUER'; // this can be the servername
-        $audience_claim = 'THE_AUDIENCE';
-        $issuedat_claim = time(); // issued at
-        $notbefore_claim = $issuedat_claim; //not before in seconds
-        $expire_claim = $issuedat_claim + 300; // expire time in seconds
+        // @see https://symfony.com/doc/current/security.html#b-the-user-provider
+        $issuer_claim = 'THE_ISSUER'; // TODO this can be the servername
+        $audience_claim = 'THE_AUDIENCE'; // TODO
+        $issuedat_claim = time();
+        $notbefore_claim = $issuedat_claim; // not before in seconds
+        $expire_claim = $issuedat_claim + self::TOKEN_EXPIRES_AFTER_SECONDS; // expire time in seconds
         $token = [
             'iss'  => $issuer_claim,
             'aud'  => $audience_claim,
@@ -24,7 +26,7 @@ class Authenticator
             'nbf'  => $notbefore_claim,
             'exp'  => $expire_claim,
             'data' => [
-                'id'        => 1,
+                'id'        => 1, // TODO return actual data
                 'firstname' => 'John',
                 'lastname'  => 'Doe',
             ],

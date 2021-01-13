@@ -10,8 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthController extends AbstractController
 {
-    public const SECRET_KEY = 'sdf8udsf8sudf98sdf8';
-
     public function __construct(
         private Authenticator $authenticator,
     ) {
@@ -22,7 +20,7 @@ class AuthController extends AbstractController
      */
     public function login(): JsonResponse
     {
-        $jwt = $this->authenticator->login();
+        $jwt = $this->authenticator->login(); // TODO login with user+pw
 
         $login = [
             'message' => 'Successful login.',
