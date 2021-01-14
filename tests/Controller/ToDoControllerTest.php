@@ -280,6 +280,10 @@ class ToDoControllerTest extends WebTestCaseWithDatabase
         $response = $this->client->getResponse();
         static::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
         static::assertEmpty($response->getContent());
+
+        $this->client->request('GET', '/api/todos/1');
+        $response = $this->client->getResponse();
+        static::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testTryToDeleteNonExistingToDo(): void
