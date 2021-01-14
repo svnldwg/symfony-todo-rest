@@ -10,11 +10,12 @@ class Authenticator
 {
     private const SECRET_KEY = 'sdf8udsf8sudf98sdf8'; // TODO secure key? env var?
     private const TOKEN_EXPIRES_AFTER_SECONDS = 300;
+    private const ENCRYPTION_ALGORITHM = 'HS256';
 
     public function login(): string
     {
         // @see https://symfony.com/doc/current/security.html#b-the-user-provider
-        $issuer_claim = 'THE_ISSUER'; // TODO this can be the servername
+        $issuer_claim = 'svnldwg/symfony-todo-rest';
         $audience_claim = 'THE_AUDIENCE'; // TODO
         $issuedat_claim = time();
         $notbefore_claim = $issuedat_claim; // not before in seconds
@@ -32,7 +33,7 @@ class Authenticator
             ],
         ];
 
-        return JWT::encode($token, self::SECRET_KEY);
+        return JWT::encode($token, self::SECRET_KEY, self::ENCRYPTION_ALGORITHM);
     }
 
     public function authenticate(Request $request): void
@@ -50,7 +51,7 @@ class Authenticator
         }
 
         try {
-            $decoded = JWT::decode($jwt, self::SECRET_KEY, ['HS256']);
+            $decoded = JWT::decode($jwt, self::SECRET_KEY, [self::ENCRYPTION_ALGORITHM]);
 
             return;
         } catch (\Exception $e) {
