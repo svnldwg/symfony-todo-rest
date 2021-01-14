@@ -1,4 +1,4 @@
-name: validate-code
+name: Tests & Code Check
 
 on:
   push:
