@@ -115,3 +115,6 @@ update-api-doc:
 
 phpunit:
 	$(CLI) php vendor/bin/phpunit --coverage-text
+
+infection:
+	$(CLI) php vendor/bin/infection
