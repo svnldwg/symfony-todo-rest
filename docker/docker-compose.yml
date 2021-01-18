@@ -19,8 +19,6 @@ services:
       - ../:/var/www/html/
     depends_on:
       - symfony-todo-rest-database
-    environment:
-      PHP_CS_FIXER_IGNORE_ENV: "true" # necessary until full PHP 8 support in php-cs-fixer
     stdin_open: true
     tty: true
   symfony-todo-rest-database:
