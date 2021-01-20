@@ -172,6 +172,9 @@
     "phpstan/phpstan-phpunit": {
         "version": "0.12.17"
     },
+    "phpstan/phpstan-symfony": {
+        "version": "0.12.14"
+    },
     "phpunit/php-code-coverage": {
         "version": "9.2.5"
     },

@@ -1,6 +1,7 @@
 includes:
   - ../vendor/phpstan/phpstan-phpunit/extension.neon
   - ../vendor/phpstan/phpstan-phpunit/rules.neon
+  - ../vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
   level: max
   inferPrivatePropertyTypeFromConstructor: true
@@ -9,5 +10,5 @@ parameters:
   paths:
     - %currentWorkingDirectory%/migrations/
     - %currentWorkingDirectory%/src/
-  ignoreErrors:
-    - '~Parameter #1 \$jsonRequest of method App\\Service\\ToDoSerializer::deserializeRequestInto(New|Existing)\(\) expects string, resource\|string given.~'
+  symfony:
+    container_xml_path: ../var/cache/dev/App_KernelDevDebugContainer.xml

@@ -67,7 +67,7 @@ setup: start composer-install doctrine-migrate ##@development configure developm
 .PHONY: setup
 
 phpstan: ##@development run phpstan
-	$(CLI) ./vendor/bin/phpstan analyze -c dev/phpstan.neon
+	$(CLI) ./vendor/bin/phpstan analyze -c dev/phpstan.neon --memory-limit=1G
 .PHONY: phpstan
 
 php-cs-fixer: ##@development run php-cs-fixer
