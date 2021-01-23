@@ -5,6 +5,7 @@ A simple RESTful API for ToDo items based on Symfony 5.
 ![CI Status](https://github.com/svnldwg/symfony-todo-rest/workflows/Tests%20&%20Code%20Check/badge.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/svnldwg/symfony-todo-rest)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/svnldwg/symfony-todo-rest/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/svnldwg/symfony-todo-rest/?branch=master)
+![PHPStan](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg?style=flat)
 
 ## Features
 * Request validation
