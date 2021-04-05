@@ -29,7 +29,7 @@
         "doctrine/data-fixtures": "^1.4",
         "friendsofphp/php-cs-fixer": "^v2.17.1",
         "infection/infection": "^0.21.0",
-        "phpstan/phpstan": "0.12.70",
+        "phpstan/phpstan": "0.12.83",
         "phpstan/phpstan-phpunit": "0.12.17",
         "phpstan/phpstan-symfony": "^0.12.14",
         "phpunit/phpunit": "^9.5",
