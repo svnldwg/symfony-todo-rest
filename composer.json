@@ -28,7 +28,7 @@
     "require-dev": {
         "doctrine/data-fixtures": "^1.4",
         "friendsofphp/php-cs-fixer": "^v2.17.1",
-        "infection/infection": "^0.21.0",
+        "infection/infection": "^0.22.0",
         "phpstan/phpstan": "0.12.87",
         "phpstan/phpstan-phpunit": "0.12.17",
         "phpstan/phpstan-symfony": "^0.12.14",
